@@ -87,10 +87,10 @@ dynamic(jmlhTentara/2).
 dynamic(wilayahMilik/2).   
 
 /* Rule */
-displayMap   
+displayMap.
 takeLocation(kodeWilayah).
 placeTroops(X,Y).         
-placeAutomatic           
+placeAutomatic.        
 checkLocationDetail(X).   
 checkPlayerDetail(X).     
 checkPlayerTerritories(X). 

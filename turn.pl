@@ -10,6 +10,6 @@ bonusTentara(australia,1).
 maxMove(3).
 
 /* Rule */
-endTurn         
+endTurn.    
 draft(X,Y).   
 move(X1,X2,Y).
