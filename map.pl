@@ -80,7 +80,31 @@ tetangga(sa2,au2).
 
 partBenua(X,Y).
 partBenua(na1,amerikautara).
-....
+partBenua(na2,amerikautara).
+partBenua(na3,amerikautara).
+partBenua(na4,amerikautara).
+partBenua(na5,amerikautara).
+partBenua(sa1,amerikaselatan).
+partBenua(sa2,amerikaselatan).
+partBenua(e1,eropa).
+partBenua(e2,eropa).
+partBenua(e3,eropa).
+partBenua(e4,eropa).
+partBenua(e5,eropa).
+partBenua(af1,afrika).
+partBenua(af2,afrika).
+partBenua(af3,afrika).
+partBenua(a1,asia).
+partBenua(a2,asia).
+partBenua(a3,asia).
+partBenua(a4,asia).
+partBenua(a5,asia).
+partBenua(a6,asia).
+partBenua(a7,asia).
+partBenua(au1,australia).
+partBenua(au2,australia).
+partBenua(au3,australia).
+
 
 /* Dynamic predicate */
 dynamic(jmlhTentara/2).    
