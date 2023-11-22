@@ -132,13 +132,58 @@ partBenua(au3,australia).
 
 
 /* Dynamic predicate */
-dynamic(jmlhTentara/2).   
-dynamic(wilayahMilik/2).   
+dynamic(JmlhTentara/2).   
+dynamic(WilayahMilik/2).
+dynamic(InfoTentara/3)   
 
 /* Rule */
 displayMap.
-takeLocation(kodeWilayah).
-placeTroops(X,Y).         
+takeLocation(KodeWilayah):- 
+    retrack(currentPlayer(X)), 
+    retrack(WilayahMilik(KodeWilayah,Y)),
+    Y == NULL, 
+    assertz(WilayahMilik(KodeWilayah,X)).
+takeLocation(KodeWilayah):- 
+    retrack(currentPlayer(X)), 
+    retrack(WilayahMilik(KodeWilayah,Y)),
+    Y \== NULL, 
+    write('Wilayah sudah dikuasai. Tidak bisa mengambil.').
+placeTroops(X,Y):-
+    retrack(currentPlayer(Player)), 
+    retrack(InfoTentara(Player,B,C)),
+    retrack(WilayahMilik(X,Pemilik)),
+    Pemilik \== Player,
+    write('Wilayah tersebut dimiliki pemain lain.'),
+    write('Silahkan pilih wilayah lain.').
+placeTroops(X,Y):-
+    retrack(currentPlayer(Player)), 
+    retrack(InfoTentara(Player,B,C)),
+    retrack(WilayahMilik(X,Pemilik)),
+    Pemilik == Player,
+    retrack(JmlhTentara(X,N)),
+    Y > C,
+    write('Jumlah tentara tidak cukup.').
+placeTroops(X,Y):-
+    retrack(currentPlayer(Player)), 
+    retrack(InfoTentara(Player,B,C)),
+    retrack(WilayahMilik(X,Pemilik)),
+    Pemilik == Player,
+    retrack(JmlhTentara(X,N)),
+    Y <= C,
+    Cl is C-Y,
+    assertz(InfoTentara(Player,B,C1)),
+    Nl is N + Y, 
+    assertz(JmlhTentara(X,Nl)),
+    write(Player),
+    write(' meletakkan '),
+    write(Y),
+    write(' tentara di wilayah'),
+    write(X),
+    write('.'),
+    write('Terdapat ')
+    write(Cl),
+    write(' tentara yang tersisa.').
+    
 placeAutomatic.        
 checkLocationDetail(X).   
 checkPlayerDetail(X).     
