@@ -268,7 +268,36 @@ placeAutomatic:-
     Nl is N + Num, 
     assertz(JmlhTentara(Wilayah,Nl)),
     placeAutomatic.
-checkLocationDetail(X).   
-checkPlayerDetail(X).     
+checkLocationDetail(KodeWilayah):-
+    write('Kode                     :'),
+    write(KodeWilayah),
+    write('Nama                     :'),
+    namaWilayah(KodeWilayah,Nama),
+    write(Nama),
+    write('Pemilik                  :'),
+    retrack(WilayahMilik(KodeWilayah,Pemilik)),
+    write(Pemilik),
+    write('Total Tentara            :'),
+    retrack(JmlhTentara(KodeWilayah,N)),
+    write(N),
+    write('Tetangga                 :'),
+    tetangga(KodeWilayah,Sebelah),
+    write(Sebelah).
+
+checkPlayerDetail(Player):-
+    write('Nama                     :'),
+    retrack(),
+    write(Nama),
+    write('Benua                    :'),
+    retrack(benuaMilik(Benua,Player)),
+    write(Benua),
+    write('Total Wilayah            :'),
+    write(Total),
+    write('Total Tentara Aktif      :'),
+    retrack(InfoTentara(Player,Aktif,Tambahan)),
+    write(Aktif),
+    write('Total Tentara Tambahan   :'),
+    write(Tambahan).
+
 checkPlayerTerritories(X). 
 checkIncomingTroops(X).    
