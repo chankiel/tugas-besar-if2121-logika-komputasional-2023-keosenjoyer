@@ -317,9 +317,6 @@ checkPlayerDetail(Player):-
     write('Total Tentara Tambahan   :'),
     write(Tambahan).
 
-checkPlayerTerritories(X). 
-checkIncomingTroops(X).    
-
 attack :-
     write("Sekarang giliran Player "),
     retract(currentPlayer(Player)),
