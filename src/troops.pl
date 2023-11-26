@@ -1,0 +1,40 @@
+:- include('pemain.pl').
+:- include('initiating.pl').
+:- include('turn.pl').
+/* Bonus Benua menyatakan bahwa seorang pemain telah menconquer sebuah benua*/
+:- dynamic(bonusBenua/2).
+
+checkIncomingTroops(PlayerLabel) :-
+    (   (PlayerLabel == 'p1') -> 
+        Label is 1
+    ;   (PlayerLabel == 'p2') -> 
+        Label is 2
+    ;   (PlayerLabel == 'p3') -> 
+        Label is 3
+    ;   (PlayerLabel == 'p4') -> 
+        Label is 4
+    ),
+    labelpemain(NamaPlayer, Label),
+    write('Nama : '), write(NamaPlayer), nl,
+    findall(Wilayah, mapInformation(NamaPlayer, Wilayah, _), ListWilayah),
+    listLength(ListWilayah, BanyakWilayah),
+    write('Total wilayah : '), write(BanyakWilayah), nl,
+    TentaraTambahan is BanyakWilayah div 2,
+    write('Jumlah tentara tambahan dari wilayah : '), write(TentaraTambahan), nl,
+    (   bonusBenua(NamaPlayer, ListBenuaYangDiconquer),
+        calculate_bonus_troops(ListBenuaYangDiconquer, BonusTroops),
+        TotalTentaraTambahan is TentaraTambahan + BonusTroops,
+        write('Total tentara tambahan : '), write(TotalTentaraTambahan), nl
+    ;   write('Total tentara tambahan : '), write(TentaraTambahan), nl
+    ).
+
+calculate_bonus_troops(ListBenua, TotalBonus) :-
+    calculate_bonus_troops(ListBenua, 0, TotalBonus).
+
+calculate_bonus_troops([], Acc, Acc).
+calculate_bonus_troops([Benua | Tail], Acc, TotalBonus) :-
+    bonusTentara(Benua, Bonus),
+    write('Bonus benua '), write(Benua), write(' : '), write(Bonus), nl,
+    NewAcc is Acc + Bonus,
+    calculate_bonus_troops(Tail, NewAcc, TotalBonus).
+
