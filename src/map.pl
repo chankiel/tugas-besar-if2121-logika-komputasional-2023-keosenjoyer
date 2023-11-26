@@ -319,3 +319,58 @@ checkPlayerDetail(Player):-
 
 checkPlayerTerritories(X). 
 checkIncomingTroops(X).    
+
+attack :-
+    write("Sekarang giliran Player "),
+    retract(currentPlayer(Player)),
+    write(Player),
+    write(" menyerang!\n"),
+    displayMap,
+    write("\n"),
+    loop1:-
+        repeat,
+        write("Pilihlah daerah yang ingin Anda mulai untuk melakukan penyerangan: "),
+        read(WiliyahAttack),
+        retract(WilayahMilik(WiliyahAttack, Pemilik)),
+        Pemilik \== Player,
+        JumlahT <= 1,
+        write("Daerah tidak valid. Silahkan input kembali. \n").
+    write("Dalam daerah "),
+    write(WiliyahAttack),
+    write(", anda memiliki sebanyak "),
+    write(JumlahT),
+    write(" tentara. \n"),
+    loop2:-
+        repeat,
+        write("Masukkan banyak tentara yang akan bertempur: ")
+        read(TentaraMauAttack),
+        write("\n"),
+        TentaraMauAttack > JumlahT - 1,
+        write("Banyak tentara tidak valid. Silahkan input kembali. \n").
+    write("Pilihlah daerah yang ingin anda serang. \n"),
+    # PRINT SELURUH DAERAH YANG INGIN DISERANG
+    loop3:-
+        write("Pilih: "),
+        read(WilayahInginDiserang),
+        # IF GAADA DI PILIHAN
+        write("Input tidak valid. Silahkan input kembali.\n").
+    write("Perang telah dimulai!!!"),
+    write("Player "),
+    write(Player),
+    write("\n"),
+    # PRINT DADU
+    write("Player "),
+    retract(WilayahMilik(WilayahInginDiserang), Pemilik2),
+    write(Player2),
+    write("\n"),
+    # PRINT DADU
+    # YG POINNYA LEBIH BESAR MENANG
+    
+
+    
+
+
+
+    
+
+
