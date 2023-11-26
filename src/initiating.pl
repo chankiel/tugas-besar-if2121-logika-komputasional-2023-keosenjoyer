@@ -1,5 +1,7 @@
 :- use_module(library(random)).
-:- dynamic(currentplayer/1).
+:- include('map.pl').
+:- dynamic(urutanPemain/1).
+:- dynamic(wilayahOwnerTroop/3).
 
 startGame :-
     write('Masukkan jumlah pemain: '),
@@ -12,12 +14,23 @@ startGame :-
     write('Urutan Pemain: '),
     announce_order(SortedPlayers),
     SortedPlayers = [TopPlayer|_],
-    assertz(currentplayer(TopPlayer)),
+    listLength(SortedPlayers, N),
+    X is 48 / N,
+    assertz(InfoTentara(TopPlayer, 0, X)),
     write('Current player: '),
     write(TopPlayer),  % Display the top player
-    rotate_list(SortedPlayers, RotatedPlayers),
     write(' dapat memulai terlebih dahulu.'), nl,
     write('Setiap pemain mendapatkan 16 tentara.'), nl,
+    assertz(urutanPemain(SortedPlayers)).
+
+gameInPlay :- 
+    retract(urutanPemain(ListPlayer)),
+    SortedPlayer = [CurrentPlayer | _],
+    write('Giliran '), write(CurrentPlayer),
+    write(' untuk memilih wilayahnya.'),
+    takeLocation(x),
+    rotate_list(SortedPlayers, RotatedPlayers),
+    retract(urutanPemain(RotatedPlayers)),
     write(RotatedPlayers).
 
 validate_num_players(Num) :-
@@ -25,6 +38,9 @@ validate_num_players(Num) :-
 validate_num_players(_) :-
     write('Mohon masukkan angka antara 2 - 4.\n'),
     startGame.
+
+listLength([],0).
+listLength([X|Xs],N) :- listLength(Xs,M), N is M+1.
 
 get_player_names(0, []) :- !.
 get_player_names(Num, [Name|Rest]) :-
