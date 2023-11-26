@@ -1,6 +1,7 @@
 :- use_module(library(random)).
 :- include('map.pl').
 :- dynamic(urutanPemain/1).
+:- dynamic(labelpemain/2).
 :- dynamic(wilayahOwnerTroop/3).
 
 startGame :-
@@ -46,6 +47,7 @@ get_player_names(0, []) :- !.
 get_player_names(Num, [Name|Rest]) :-
     NewNum is Num - 1,
     get_player_names(NewNum, Rest),
+    assertz(labelpemain(Name, NewNum)),
     write('Masukkan nama pemain '),
     write(Num),
     write(': '),
