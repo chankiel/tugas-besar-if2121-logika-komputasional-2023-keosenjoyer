@@ -1,4 +1,3 @@
-:- include('initiating.pl').  
 :- include('data.pl').
 /* Rule */
        
@@ -21,11 +20,11 @@ checkPlayerTerritories(PlayerLabel) :-
     detailsOfContinent(ListOfContinent).
 
 detailsOfContinent([]).
-detailsOfContinent([NamaBenua | Tail], X) :-
+detailsOfContinent([NamaBenua | Tail]) :-
     write('Benua '),
     write(NamaBenua),
     write(' ('),
-    findall(NamaBenua, partBenua(Kode,NamaBenua), ListKodeWilayah),
+    findall(NamaBenua, partBenua(_,NamaBenua), ListKodeWilayah),
     listLength(ListKodeWilayah, Y),
     write(Y),
     write('/'),
@@ -46,25 +45,25 @@ printListKodeWilayah([KodeWilayah | Tail]) :-
     write('Jumlah tentara : '), write(JumlahTentara), nl,
     printListKodeWilayah(Tail).
 
-placeTroops(Wilayah,Num):-
+placeTroops(Wilayah,_):-
     retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,Jumlah)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik \== Player,
     write('Wilayah tersebut dimiliki pemain lain.'),
     write('Silahkan pilih wilayah lain.').
 
 placeTroops(Wilayah,Num):-
     retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,Jumlah)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik == Player,
-    retract(playerInformation(Player,Aktif,Tambahan,NWilayah,NBenua)),
+    retract(playerInformation(Player,_,Tambahan,_,_)),
     Num > Tambahan,
     write('Jumlah tentara tidak cukup.').
 placeTroops(Wilayah,Num):-
     retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,Jumlah)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik == Player,
-    retract(playerInformation(Player,Aktif,Tambahan,NWilayah,NBenua)),
+    retract(playerInformation(Player,Aktif,_,_,_)),
     Num =< Aktif,
     retract(mapInformation(Player,Wilayah,N)),
     NewTambahan is Aktif-Num,
@@ -81,9 +80,9 @@ placeTroops(Wilayah,Num):-
     write('Terdapat '),
     write(NewTambahan),
     write(' tentara yang tersisa.').
-draft(Wilayah,Num):-
+draft(Wilayah,_):-
     retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,Jumlah)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik \== Player,
     write('Player '),
     write(Player),
@@ -91,9 +90,9 @@ draft(Wilayah,Num):-
     write(Wilayah).
 draft(Wilayah,Num):-
     retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,Jumlah)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik == Player,
-    retract(playerInformation(Player,Aktif,Tambahan,NWilayah,NBenua)),
+    retract(playerInformation(Player,_,Tambahan,_,_)),
     Num > Tambahan,
     write('Player '),
     write(Player),
@@ -101,7 +100,7 @@ draft(Wilayah,Num):-
     write(Num),
     write(' tentara tambahan di wilayah'),
     write(Wilayah),
-    write('Pasukan tidak mencukupi.').
+    write('Pasukan tidak mencukupi.'),
     write('Jumlah Pasukan Tambahan Player '),
     write(Player),
     write(': '),
@@ -109,9 +108,9 @@ draft(Wilayah,Num):-
     write('draft dibatalkan.').
 draft(Wilayah,Num):-
     retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,Jumlah)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik == Player,
-    retract(playerInformation(Player,Aktif,Tambahan,NWilayah,NBenua)),
+    retract(playerInformation(Player,Aktif,_,_,_)),
     Num =< Aktif,
     retract(mapInformation(Player,Wilayah,N)),
     NewTambahan is Aktif-Num,
@@ -146,17 +145,17 @@ randomFirstArgument(Second, RandomFirst) :-
 
 placeAutomatic:-
     retract(currentPlayer(Player)),
-    retract(playerInformation(Player,Aktif,Tambahan,NWilayah,NBenua)),
+    retract(playerInformation(Player,_,Tambahan,_,_)),
     Tambahan == 0,
     write('Seluruh tentara '),
     write(Player),
     write(' sudah diletakkan.').
 placeAutomatic:-
     retract(currentPlayer(Player)),
-    retract(playerInformation(Player,Aktif,Tambahan,NWilayah,NBenua)),
+    retract(playerInformation(Player,Aktif,Tambahan,_,_)),
     Tambahan \== 0,
     random(1,Tambahan,Num),
-    retract(Pemilik,Wilayah,Jumlah),
+    retract(_,Wilayah,_),
     randomFirstArgument(Player,Wilayah),
     retract(mapInformation(Player,Wilayah,N)),
     NewTambahan is Aktif-Num,
@@ -170,12 +169,11 @@ checkLocationDetail(KodeWilayah):-
     write(KodeWilayah),
     write('Nama                     :'),
     namaWilayah(KodeWilayah,Nama),
-    retract(mapInformation(KodePemilik,Wilayah,Jumlah)),
     retract(mapInformation(Player,KodeWilayah,N)),
     tetangga(KodeWilayah,Sebelah),
     write(Nama),
     write('Pemilik                  :'),
-    write(Pemilik),
+    write(Player),
     write('Total Tentara            :'),
     write(N),
     write('Tetangga                 :'),
@@ -192,7 +190,7 @@ checkPlayerDetail(Player):-
     ),
     labelpemain(PlayerName, Label),
     retract(benuaMilik(Benua,Player)),
-    retract(playerInformation(PlayerName,Aktif,Tambahan,Total,List)),
+    retract(playerInformation(PlayerName,Aktif,Tambahan,Total,_)),
     write('Nama                     :'),
     write(PlayerName),
     write('Benua                    :'),
