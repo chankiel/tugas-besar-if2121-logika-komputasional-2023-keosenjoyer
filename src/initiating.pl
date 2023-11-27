@@ -1,7 +1,7 @@
 :- use_module(library(random)).
-:- include('map.pl').
+:- include('data.pl').
 
-startGame :-
+startGame :-    
     write('Masukkan jumlah pemain: '),
     read(NumPlayers), nl,
     validate_num_players(NumPlayers),
@@ -14,7 +14,7 @@ startGame :-
     SortedPlayers = [TopPlayer|_],
     listLength(SortedPlayers, N),
     X is 48 / N,
-    assertz(InfoTentara(TopPlayer, 0, X)),
+    assertz(playerInformation(TopPlayer,0,X,[],[])),
     write('Current player: '),
     write(TopPlayer),  % Display the top player
     write(' dapat memulai terlebih dahulu.'), nl,
@@ -37,7 +37,7 @@ validate_num_players(_) :-
     startGame.
 
 listLength([],0).
-listLength([X|Xs],N) :- listLength(Xs,M), N is M+1.
+listLength([_|Xs],N) :- listLength(Xs,M), N is M+1.
 
 get_player_names(0, []) :- !.
 get_player_names(Num, [Name|Rest]) :-
@@ -83,5 +83,3 @@ announce_order([Player | Rest]) :-
 
 rotate_list([Head|Tail], RotatedList) :-
     append(Tail, [Head], RotatedList).
-
-set_top_player([Head|Tail]) :- Head.
