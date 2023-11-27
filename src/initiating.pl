@@ -1,8 +1,5 @@
 :- use_module(library(random)).
 :- include('map.pl').
-:- dynamic(urutanPemain/1).
-:- dynamic(labelpemain/2).
-:- dynamic(wilayahOwnerTroop/3).
 
 startGame :-
     write('Masukkan jumlah pemain: '),
@@ -26,12 +23,11 @@ startGame :-
 
 gameInPlay :- 
     retract(urutanPemain(ListPlayer)),
-    SortedPlayer = [CurrentPlayer | _],
+    ListPlayer = [CurrentPlayer | _],
     write('Giliran '), write(CurrentPlayer),
     write(' untuk memilih wilayahnya.'),
-    takeLocation(x),
-    rotate_list(SortedPlayers, RotatedPlayers),
-    retract(urutanPemain(RotatedPlayers)),
+    rotate_list(ListPlayer, RotatedPlayers),
+    assertz(urutanPemain(RotatedPlayers)),
     write(RotatedPlayers).
 
 validate_num_players(Num) :-

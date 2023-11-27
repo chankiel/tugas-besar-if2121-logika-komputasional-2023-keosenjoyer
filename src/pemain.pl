@@ -1,21 +1,5 @@
-:- include('initiating.pl').
-
-/* Fakta dan Relasi */
-initDistribusi(X,Y).
-initDistribusi(2,24).
-initDistribusi(3,26).
-initDistribusi(4,12).
-
-/* Dynamic predicate */
-:- dynamic(nPemain/1).
-
-
-/* Nama pemain, Troops Aktif, Troops Tambahan, Wilayah yang dimiliki, Benua yang dimiliki (maksudnya wilayahnya ada di benua mana aja)*/
-:- dynamic(playerInformation/5). 
-/ Nama pemilik, Kode wilayah, Troops pemilik pada wilayah tersebut*/
-:- dynamic(mapInformation/3).
-:- dynamic(NameTurn/2).     
-
+:- include('initiating.pl').  
+:- include('data.pl')
 /* Rule */
 throw2Dice(X).           
 

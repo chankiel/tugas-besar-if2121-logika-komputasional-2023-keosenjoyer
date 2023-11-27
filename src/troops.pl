@@ -1,8 +1,7 @@
 :- include('pemain.pl').
 :- include('initiating.pl').
 :- include('turn.pl').
-/* Bonus Benua menyatakan bahwa seorang pemain telah menconquer sebuah benua*/
-:- dynamic(bonusBenua/2).
+
 
 checkIncomingTroops(PlayerLabel) :-
     (   (PlayerLabel == 'p1') -> 
