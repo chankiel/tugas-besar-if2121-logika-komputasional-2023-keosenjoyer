@@ -1,9 +1,8 @@
-:- include('src/data.pl').
-:- include('src/initiating.pl').
-:- include('src/map.pl').
-:- include('src/pemain.pl').
-:- include('src/troops.pl').
-:- include('src/turn.pl').
-
 startGame :-
+    ['src/data.pl'],
+    ['src/initiating.pl'],
+    ['src/map.pl'],
+    ['src/pemain.pl'],
+    ['src/troops.pl'],
+    ['src/turn.pl'],
     initialize.

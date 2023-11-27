@@ -1,4 +1,3 @@
-:- use_module(library(random)).
 :- include('data.pl').
 
 initialize :-    
@@ -14,12 +13,13 @@ initialize :-
     SortedPlayers = [TopPlayer|_],
     assertz(currentPlayer(TopPlayer)),
     listLength(SortedPlayers, N),
-    X is 48 / N,
+    X is 48 div N,
     assertz(playerInformation(TopPlayer,0,X,[],[])),
     write('Current player: '),
     write(TopPlayer),  % Display the top player
     write(' dapat memulai terlebih dahulu.'), nl,
-    write('Setiap pemain mendapatkan 16 tentara.'), nl,
+    write('Setiap pemain mendapatkan '),write(X),
+    write(' tentara.'), nl,
     assertz(urutanPemain(SortedPlayers)).
 
 gameInPlay :- 

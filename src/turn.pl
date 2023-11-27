@@ -1,6 +1,4 @@
 :- include('data.pl').
-:- include('data.pl').
-
 /* Rule */
 /* endTurn. */
 
@@ -49,9 +47,6 @@ move_action(P1,P2,X1,X2,N1,N2,Y,C):-
 move_action(P1,P2,X1,X2,N1,N2,Y,C):-
     write(C),write('tidak memiliki wilayah '),write(X1),write(' dan '),
     write(X2),write('.'),nl,write('Pemindahan dibatalkan.'),nl.
-
-# Berisi nama dan kartu risk di tangan
-RiskList = ["CEASEFIRE ORDER","SUPER SOLDIER SERUM","AUXILIARY TROOPS","REBELLION","DISEASE OUTBREAK","SUPPLY CHAIN"].
 
 getRisk([H|_], 1, H).
 getRisk([_|T], Idx, Elmt) :-
