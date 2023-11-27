@@ -8,13 +8,12 @@ initialize :-
     roll_dice(Players, Results), nl,
     sort_base_on_results(Results, SortedResults),
     get_sorted_players(SortedResults, SortedPlayers),
-    write('Urutan Pemain: '),
-    announce_order(SortedPlayers),
-    SortedPlayers = [TopPlayer|_],
-    assertz(currentPlayer(TopPlayer)),
     listLength(SortedPlayers, N),
     X is 48 div N,
-    assertz(playerInformation(TopPlayer,0,X,[],[])),
+    write('Urutan Pemain: '),
+    announce_order(SortedPlayers, X),
+    SortedPlayers = [TopPlayer|_],
+    assertz(currentPlayer(TopPlayer)),
     write('Current player: '),
     write(TopPlayer),  % Display the top player
     write(' dapat memulai terlebih dahulu.'), nl,
@@ -76,9 +75,10 @@ insert_in_order([ScoreX, PlayerX], [[ScoreY, PlayerY]|Rest], [[ScoreY, PlayerY]|
     ScoreX < ScoreY,
     insert_in_order([ScoreX, PlayerX], Rest, SortedRest).
 
-announce_order([]) :- nl.
-announce_order([Player | Rest]) :- 
+announce_order([], X) :- nl.
+announce_order([Player | Rest]), X :- 
     write(Player),
+    assertz(playerInformation(Player,0,X,0,0)),
     (   Rest \= [] -> write(' - '); true ),
     announce_order(Rest).
 
