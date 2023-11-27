@@ -66,3 +66,47 @@ move(X1,X2,Y):-
     currentPlayer(C),
     write(C),write('tidak memiliki wilayah '),write(X1),write(' dan '),
     write(X2),write('.'),nl,write('Pemindahan dibatalkan.'),nl.
+
+# Berisi nama dan kartu risk di tangan
+RiskList = ["CEASEFIRE ORDER","SUPER SOLDIER SERUM","AUXILIARY TROOPS","REBELLION","DISEASE OUTBREAK","SUPPLY CHAIN"]
+
+getRisk([H|_],1,H).
+getRisk([H|T],Idx,Elmt):-
+    IdxNew is Idx-1,
+    getRisk(T,IdxNew,Elmt).
+
+:- dynamic(riskStat/2)
+
+risk:-
+    currentPlayer(C),
+    risk(C,R),!,
+    random(1,7,RN),
+    getRisk(RiskList,RN,Risk),
+    assertz(riskStat(C,Risk)),
+    risk_message(RN).
+
+risk_message(RN):-
+    RN==1,!,
+    write('Hingga giliran berikutnya, wilayah pemain tidak dapat diserang oleh lawan.'),nl.
+
+risk_message(RN):-
+    RN==2,!,
+    write('Hingga giliran berikutnya,')nl,write('semua hasil lemparan dadu saat penyerangan dan pertahanan akan bernilai 6.'),nl.
+
+risk_message(RN):-
+    RN==3,!,
+    write('Pada giliran berikutnya,')nl,
+    write('Tentara tambahan yang didapatkan pemain akan bernilai 2 kali lipat.'),nl.
+
+risk_message(RN):-
+    RN==4,!,
+    write('Salah satu wilayah acak pemain akan berpindah kekuasaan menjadi milik lawan.'),nl.
+
+risk_message(RN):-
+    RN==5,!,
+    write('Hingga giliran berikutnya,'),nl,
+    write('semua hasil lemparan dadu saat penyerangan dan pertahanan akan bernilai 1'),nl.
+
+risk_message(RN):-
+    RN==6,!,
+    write('Pada giliran berikutnya, pemain tidak mendapatkan tentara tambahan.'),nl.
