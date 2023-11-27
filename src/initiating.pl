@@ -77,9 +77,9 @@ insert_in_order([ScoreX, PlayerX], [[ScoreY, PlayerY]|Rest], [[ScoreY, PlayerY]|
 announce_order([], X) :- nl.
 announce_order([Player | Rest], X) :- 
     write(Player),
-    assertz(playerInformation(Player,0,X,0,0)),
+    assertz(playerInformation(Player,0,X,0)),
     (   Rest \= [] -> write(' - '); true ),
-    announce_order(Rest).
+    announce_order(Rest,X).
 
 rotate_list([Head|Tail], RotatedList) :-
     append(Tail, [Head], RotatedList).
