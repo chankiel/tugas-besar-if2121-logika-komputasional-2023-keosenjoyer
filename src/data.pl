@@ -11,6 +11,8 @@
 :- dynamic(currentPlayer/1).
 /* Nama dan Benua */
 :- dynamic(bonusBenua/2).
+/* Untuk menghitung banyak gerakan yang telah dilakukan seorang pemain */
+:- dynamic(countMove/1).
 
 bonusTentara(X,Y). 
 bonusTentara(amerikautara,3).

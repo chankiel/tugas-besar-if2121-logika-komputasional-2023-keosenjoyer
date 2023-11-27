@@ -1,7 +1,7 @@
 :- use_module(library(random)).
 :- include('data.pl').
 
-startGame :-    
+initialize :-    
     write('Masukkan jumlah pemain: '),
     read(NumPlayers), nl,
     validate_num_players(NumPlayers),
@@ -12,6 +12,7 @@ startGame :-
     write('Urutan Pemain: '),
     announce_order(SortedPlayers),
     SortedPlayers = [TopPlayer|_],
+    assertz(currentPlayer(TopPlayer)),
     listLength(SortedPlayers, N),
     X is 48 / N,
     assertz(playerInformation(TopPlayer,0,X,[],[])),
