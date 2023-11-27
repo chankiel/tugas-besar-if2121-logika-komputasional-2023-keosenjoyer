@@ -23,17 +23,37 @@ displayMap :- write('###########################################################
 
 
 takeLocation(KodeWilayah):- 
-    retract(currentPlayer(Player)), 
+    \+ wilayah(KodeWilayah),
+    write('Tidak ada wilayah tersebut'),!.
+takeLocation(KodeWilayah):- 
     retract(mapInformation(KodeWilayah,Pemilik,_)),
-    Pemilik \== null, 
-    assertz(mapInformation(KodeWilayah,Player,_)),
-    write('Wilayah sudah dikuasai. Tidak bisa mengambil.').
+    !,
+    assertz(mapInformation(KodeWilayah,Pemilik,_)),
+    write('Wilayah sudah dikuasai. Tidak bisa mengambil.'),nl,
+    retract(currentPlayer(Player)),
+    write('Giliran '),
+    write(Player),
+    write(' untuk memilih wilayahnya.'),
+    assertz(currentPlayer(Player)).
 takeLocation(KodeWilayah):- 
     retract(currentPlayer(Player)), 
-    retract(mapInformation(KodeWilayah,Pemilik,_)),
-    Pemilik == null, 
     assertz(mapInformation(KodeWilayah,Player,_)), 
-    write('Wilayah berhasil dikuasai.').
+    write(Player),
+    write(' mengambil wilayah '),
+    write(KodeWilayah),
+    write('.'),nl,
+    retract(urutanPemain(ListPlayer)),
+    rotate_list(ListPlayer, NextListPlayer),
+    NextListPlayer = [NewCurrentPlayer, _],
+    assertz(urutanPemain(NextListPlayer)), 
+    assertz(currentPlayer(NewCurrentPlayer)), 
+    write('Giliran '),
+    write(NewCurrentPlayer),
+    write(' untuk memilih wilayahnya.'),nl,
+    findall(Place, mapInformation(Place,_,_), ListWilayah),
+    listLength(ListWilayah, N),
+    N == 24,
+    write('Seluruh wilayah telah diambil pemain. Memulai pembagian sisa tentara.').
 
 /*
 attack :-

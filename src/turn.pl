@@ -1,5 +1,4 @@
 :- include('data.pl').
-
 /* Rule */
 /* endTurn. */
 
@@ -8,6 +7,7 @@ move(X1,X2,Y):-
     write('Anda sudah melakukan move sebanyak tiga kali!.'),nl.
 
 move(X1,X2,Y):-
+    assertz(countMove(1)),
     retract(countMove(X)),
     XNew is X+1,
     assertz(countMove(XNew)),
@@ -48,24 +48,20 @@ move_action(P1,P2,X1,X2,N1,N2,Y,C):-
     write(C),write('tidak memiliki wilayah '),write(X1),write(' dan '),
     write(X2),write('.'),nl,write('Pemindahan dibatalkan.'),nl.
 
-RiskList = ["CEASEFIRE ORDER","SUPER SOLDIER SERUM","AUXILIARY TROOPS","REBELLION","DISEASE OUTBREAK","SUPPLY CHAIN"].
-
 getRisk([H|_], 1, H).
 getRisk([_|T], Idx, Elmt) :-
     IdxNew is Idx-1,
     getRisk(T, IdxNew, Elmt).
 
-:- dynamic(riskStat/2).
-
 risk:-
-    retract(urutanPemain(ListPlayer)),
-    ListPlayer = [C|_],
-
+    assertz(currentPlayer('tes')),
     currentPlayer(C),
     random(1, 7, RN),
+    risk_content(RiskList),
     getRisk(RiskList, RN, Risk),
     assertz(riskStat(C, Risk)),
-    risk_message(RN).
+    write('Player '),write(C),write(' mendapatkan risk card '),write(Risk),write('.'),nl,
+    risk_message(RN),!.
 
 risk_message(1):-
     write('Hingga giliran berikutnya, wilayah pemain tidak dapat diserang oleh lawan.'), nl.

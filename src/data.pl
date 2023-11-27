@@ -11,8 +11,10 @@
 :- dynamic(currentPlayer/1).
 /* Nama dan Benua */
 :- dynamic(bonusBenua/2).
-/* Untuk menghitung banyak gerakan yang telah dilakukan seorang pemain */
-:- dynamic(countMove/1).
+/* Nama dan risk card sekarang */
+:- dynamic(riskStat/2).
+
+risk_content(['CEASEFIRE ORDER','SUPER SOLDIER SERUM','AUXILIARY TROOPS','REBELLION','DISEASE OUTBREAK','SUPPLY CHAIN']).
 
 /* inisialisasi */
 inisialisasiMapInformation:-
