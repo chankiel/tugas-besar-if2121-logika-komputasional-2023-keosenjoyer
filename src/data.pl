@@ -14,8 +14,10 @@
 :- dynamic(riskStat/2).
 /* Info benua dan pemiliknya */
 :- dynamic(infoBenua/2).
+/* Jumlah aksi current player (move,attack) */
+:- dynamic(countAction/2).
 
-risk_content(['CEASEFIRE ORDER','SUPER SOLDIER SERUM','AUXILIARY TROOPS','REBELLION','DISEASE OUTBREAK','SUPPLY CHAIN']).
+risk_content(['CEASEFIRE ORDER','SUPER SOLDIER SERUM','AUXILIARY TROOPS','REBELLION','DISEASE OUTBREAK','SUPPLY CHAIN ISSUE']).
 
 listLength([],0).
 listLength([_|Xs],N) :- listLength(Xs,M), N is M+1.
