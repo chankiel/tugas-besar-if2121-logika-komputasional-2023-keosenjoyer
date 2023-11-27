@@ -1,8 +1,7 @@
 :- use_module(library(random)).
-:- include('data.pl')
+:- include('data.pl').
 
 /* Rule */
-displayMap.
 displayMap :- write('#################################################################################################\n'),
              write('#         North America         #        Europe         #                 Asia                  #\n'),
              write('#                               #                       #                                       #\n'),
@@ -21,6 +20,8 @@ displayMap :- write('###########################################################
              write('#                               #                          #                                    #\n'),
              write('#       South America           #         Africa           #          Australia                 #\n'),
              write('#################################################################################################\n').
+
+/*
 takeLocation(KodeWilayah):- 
     retract(currentPlayer(Player)), 
     retract(WilayahMilik(KodeWilayah,Pemilik)),
@@ -31,8 +32,10 @@ takeLocation(KodeWilayah):-
     retract(WilayahMilik(KodeWilayah,Pemilik)),
     Pemilik \== NULL, 
     write('Wilayah sudah dikuasai. Tidak bisa mengambil.').
+*/
 
 
+/*
 attack :-
     write("Sekarang giliran Player "),
     retract(currentPlayer(Player)),
@@ -78,7 +81,7 @@ attack :-
     write("\n"),
     # PRINT DADU
     # YG POINNYA LEBIH BESAR MENANG
-    
+*/
 
     
 
