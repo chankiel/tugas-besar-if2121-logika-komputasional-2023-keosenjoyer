@@ -45,6 +45,17 @@ printListKodeWilayah([KodeWilayah | Tail]) :-
     write('Jumlah tentara : '), write(JumlahTentara), nl,
     printListKodeWilayah(Tail).
 
+nextPlayer(Player):-
+    playerInformation(Player,_,Tambahan,_),
+    Tambahan \== 0,!.
+nextPlayer(Player):-
+    retract(currentPlayer(Player)),
+    retract(urutanPemain(ListPlayer)),
+    rotate_list(ListPlayer, NextListPlayer),
+    NextListPlayer = [NewCurrentPlayer| _],
+    assertz(urutanPemain(NextListPlayer)), 
+    assertz(currentPlayer(NewCurrentPlayer)),
+    nextPlayer(NewCurrentPlayer).
 placeTroops(Wilayah,Num):-
     currentPlayer(Player), 
     mapInformation(Pemilik,Wilayah,N),
@@ -86,11 +97,13 @@ placeTroops(Wilayah,Num):-
     write(' tentara yang tersisa.'),nl,
     retract(urutanPemain(ListPlayer)),
     rotate_list(ListPlayer, NextListPlayer),
-    NextListPlayer = [NewCurrentPlayer, _],
+    NextListPlayer = [NewCurrentPlayer| _],
     assertz(urutanPemain(NextListPlayer)), 
     assertz(currentPlayer(NewCurrentPlayer)),
+    nextPlayer(NewCurrentPlayer),
     write('Giliran '),
-    write(NewCurrentPlayer),
+    currentPlayer(X),
+    write(X),
     write(' untuk meletakkan tentaranya.'),!.
 draft(Wilayah,_):-
     retract(currentPlayer(Player)), 
@@ -145,8 +158,8 @@ draft(Wilayah,Num):-
     write(': '),
     write(NewTambahan).
 
-getFirstArguments(Second, FirstList) :-
-    findall(First, fact(First, Second), FirstList).
+getFirstArguments(Pemilik, WilayahList) :-
+    findall(Wilayah, mapInformation(Pemilik, Wilayah, N), WilayahList).
 randomElement(List, RandomElement) :-
     length(List, Length),
     random(0, Length, Index),
@@ -156,26 +169,41 @@ randomFirstArgument(Second, RandomFirst) :-
     randomElement(FirstList, RandomFirst).
 
 placeAutomatic:-
-    retract(currentPlayer(Player)),
-    retract(playerInformation(Player,_,Tambahan,_,_)),
+    currentPlayer(Player),
+    playerInformation(Player,Aktif,Tambahan,BanyakWilayah),
     Tambahan == 0,
     write('Seluruh tentara '),
     write(Player),
-    write(' sudah diletakkan.').
-placeAutomatic:-
+    write(' sudah diletakkan.'),nl,
     retract(currentPlayer(Player)),
-    retract(playerInformation(Player,Aktif,Tambahan,_,_)),
-    Tambahan \== 0,
-    random(1,Tambahan,Num),
-    retract(_,Wilayah,_),
+    retract(urutanPemain(ListPlayer)),
+    rotate_list(ListPlayer, NextListPlayer),
+    NextListPlayer = [NewCurrentPlayer| _],
+    assertz(urutanPemain(NextListPlayer)), 
+    assertz(currentPlayer(NewCurrentPlayer)),
+    nextPlayer(NewCurrentPlayer),
+    write('Giliran '),
+    currentPlayer(X),
+    write(X),
+    write(' untuk meletakkan tentaranya.'),!.
+placeAutomatic:-
+    currentPlayer(Player), 
+    retract(playerInformation(Player,Aktif,Tambahan,BanyakWilayah)),
     randomFirstArgument(Player,Wilayah),
     retract(mapInformation(Player,Wilayah,N)),
-    NewTambahan is Aktif-Num,
+    TempTambahan is Tambahan + 1,
+    random(1,TempTambahan,Num),
+    NewTambahan is Tambahan-Num,
     NewAktif is Aktif+Num,
-    assertz(playerInformation(Player,NewAktif,NewTambahan)),
     Nl is N + Num, 
+    assertz(playerInformation(Player,NewAktif,NewTambahan,BanyakWilayah)),
     assertz(mapInformation(Player,Wilayah,Nl)),
-    placeAutomatic.
+    write(Player),
+    write(' meletakkan '),
+    write(Num),
+    write(' tentara di wilayah '),
+    write(Wilayah),nl,
+    placeAutomatic,!.
 checkLocationDetail(KodeWilayah):-
     write('Kode                     :'),
     write(KodeWilayah),

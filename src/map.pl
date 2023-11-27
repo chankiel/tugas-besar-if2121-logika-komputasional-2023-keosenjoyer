@@ -44,8 +44,8 @@ takeLocation(KodeWilayah):-
     write('.'),nl,
     retract(urutanPemain(ListPlayer)),
     rotate_list(ListPlayer, NextListPlayer),
-    NextListPlayer = [NewCurrentPlayer, _],
     assertz(urutanPemain(NextListPlayer)), 
+    NextListPlayer = [NewCurrentPlayer| _],
     assertz(currentPlayer(NewCurrentPlayer)), 
     write('Giliran '),
     write(NewCurrentPlayer),
@@ -254,4 +254,5 @@ attack :-
         getIndex(Y, HasilLoc, Pilihan),
         mapInformation(Enemy, HasilLoc, EnemyTroops)
         /* ambil info wilayah yang dipilih */
+    ).
     
