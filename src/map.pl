@@ -21,19 +21,20 @@ displayMap :- write('###########################################################
              write('#       South America           #         Africa           #          Australia                 #\n'),
              write('#################################################################################################\n').
 
-/*
-takeLocation(KodeWilayah):- 
-    retract(currentPlayer(Player)), 
-    retract(WilayahMilik(KodeWilayah,Pemilik)),
-    Pemilik == NULL, 
-    assertz(WilayahMilik(KodeWilayah,Player)).
-takeLocation(KodeWilayah):- 
-    retract(currentPlayer(Player)), 
-    retract(WilayahMilik(KodeWilayah,Pemilik)),
-    Pemilik \== NULL, 
-    write('Wilayah sudah dikuasai. Tidak bisa mengambil.').
-*/
 
+takeLocation(KodeWilayah):- 
+    retract(currentPlayer(Player)), 
+    retract(mapInformation(KodeWilayah,Pemilik,_)),
+    Pemilik \== Player, 
+    assertz(mapInformation(KodeWilayah,Player,_)),
+    write('Wilayah sudah dikuasai. Tidak bisa mengambil.').
+takeLocation(KodeWilayah):- 
+    retract(currentPlayer(Player)), 
+    retract(mapInformation(KodeWilayah,Pemilik,_)),
+    Pemilik == Player, 
+    assertz(mapInformation(KodeWilayah,Player,_)), 
+    write('Wilayah berhasil dikuasai.'),
+    !.
 
 /*
 attack :-
