@@ -14,7 +14,6 @@ initialize :-
     announce_order(SortedPlayers, X),
     SortedPlayers = [TopPlayer|_],
     assertz(currentPlayer(TopPlayer)),
-    write('Current player: '),
     write(TopPlayer),  % Display the top player
     write(' dapat memulai terlebih dahulu.'), nl,
     write('Setiap pemain mendapatkan '),write(X),
@@ -76,7 +75,7 @@ insert_in_order([ScoreX, PlayerX], [[ScoreY, PlayerY]|Rest], [[ScoreY, PlayerY]|
     insert_in_order([ScoreX, PlayerX], Rest, SortedRest).
 
 announce_order([], X) :- nl.
-announce_order([Player | Rest]), X :- 
+announce_order([Player | Rest], X) :- 
     write(Player),
     assertz(playerInformation(Player,0,X,0,0)),
     (   Rest \= [] -> write(' - '); true ),
