@@ -25,16 +25,15 @@ displayMap :- write('###########################################################
 takeLocation(KodeWilayah):- 
     retract(currentPlayer(Player)), 
     retract(mapInformation(KodeWilayah,Pemilik,_)),
-    Pemilik \== Player, 
+    Pemilik \== null, 
     assertz(mapInformation(KodeWilayah,Player,_)),
     write('Wilayah sudah dikuasai. Tidak bisa mengambil.').
 takeLocation(KodeWilayah):- 
     retract(currentPlayer(Player)), 
     retract(mapInformation(KodeWilayah,Pemilik,_)),
-    Pemilik == Player, 
+    Pemilik == null, 
     assertz(mapInformation(KodeWilayah,Player,_)), 
-    write('Wilayah berhasil dikuasai.'),
-    !.
+    write('Wilayah berhasil dikuasai.').
 
 /*
 attack :-

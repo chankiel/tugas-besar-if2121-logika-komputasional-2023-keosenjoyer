@@ -14,6 +14,33 @@
 /* Untuk menghitung banyak gerakan yang telah dilakukan seorang pemain */
 :- dynamic(countMove/1).
 
+/* inisialisasi */
+inisialisasiMapInformation:-
+    assertz(mapInformation(null,na1,0)),
+    assertz(mapInformation(null,na2,0)),
+    assertz(mapInformation(null,na3,0)),
+    assertz(mapInformation(null,na4,0)),
+    assertz(mapInformation(null,na5,0)),
+    assertz(mapInformation(null,sa1,0)),
+    assertz(mapInformation(null,sa2,0)),
+    assertz(mapInformation(null,e1,0)),
+    assertz(mapInformation(null,e2,0)),
+    assertz(mapInformation(null,e3,0)),
+    assertz(mapInformation(null,e4,0)),
+    assertz(mapInformation(null,e5,0)),
+    assertz(mapInformation(null,af1,0)),
+    assertz(mapInformation(null,af2,0)),
+    assertz(mapInformation(null,af3,0)),
+    assertz(mapInformation(null,a1,0)),
+    assertz(mapInformation(null,a2,0)),
+    assertz(mapInformation(null,a3,0)),
+    assertz(mapInformation(null,a4,0)),
+    assertz(mapInformation(null,a5,0)),
+    assertz(mapInformation(null,a6,0)),
+    assertz(mapInformation(null,a7,0)),
+    assertz(mapInformation(null,au1,0)),
+    assertz(mapInformation(null,au2,0)).
+
 bonusTentara(X,Y). 
 bonusTentara(amerikautara,3).
 bonusTentara(amerikaselatan,2).

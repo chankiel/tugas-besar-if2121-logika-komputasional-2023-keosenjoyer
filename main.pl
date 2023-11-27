@@ -6,4 +6,5 @@
 :- include('src/turn.pl').
 
 startGame :-
-    initialize.
+    initialize,
+    inisialisasiMapInformation.
