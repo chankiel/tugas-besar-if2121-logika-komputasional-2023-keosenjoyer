@@ -1,7 +1,6 @@
-:- include('initiating.pl').  
-:- include('data.pl')
+:- include('data.pl').
 /* Rule */
-throw2Dice(X).           
+       
 
 checkPlayerTerritories(PlayerLabel) :-
     (   (PlayerLabel == 'p1') -> 
@@ -21,11 +20,11 @@ checkPlayerTerritories(PlayerLabel) :-
     detailsOfContinent(ListOfContinent).
 
 detailsOfContinent([]).
-detailsOfContinent([NamaBenua | Tail], X) :-
+detailsOfContinent([NamaBenua | Tail]) :-
     write('Benua '),
     write(NamaBenua),
     write(' ('),
-    findall(NamaBenua, partBenua(Kode,NamaBenua), ListKodeWilayah),
+    findall(NamaBenua, partBenua(_,NamaBenua), ListKodeWilayah),
     listLength(ListKodeWilayah, Y),
     write(Y),
     write('/'),
@@ -46,44 +45,44 @@ printListKodeWilayah([KodeWilayah | Tail]) :-
     write('Jumlah tentara : '), write(JumlahTentara), nl,
     printListKodeWilayah(Tail).
 
-placeTroops(Wilayah,Num):-
+placeTroops(Wilayah,_):-
     retract(currentPlayer(Player)), 
-    retract(WilayahMilik(Wilayah,Pemilik)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik \== Player,
     write('Wilayah tersebut dimiliki pemain lain.'),
     write('Silahkan pilih wilayah lain.').
 
 placeTroops(Wilayah,Num):-
     retract(currentPlayer(Player)), 
-    retract(WilayahMilik(Wilayah,Pemilik)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik == Player,
-    retract(InfoTentara(Player,Aktif,Tambahan)),
+    retract(playerInformation(Player,_,Tambahan,_,_)),
     Num > Tambahan,
     write('Jumlah tentara tidak cukup.').
 placeTroops(Wilayah,Num):-
     retract(currentPlayer(Player)), 
-    retract(WilayahMilik(Wilayah,Pemilik)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik == Player,
-    retract(InfoTentara(Player,Aktif,Tambahan)),
-    Num <= Aktif,
-    retract(JmlhTentara(Wilayah,N)),
+    retract(playerInformation(Player,Aktif,_,_,_)),
+    Num =< Aktif,
+    retract(mapInformation(Player,Wilayah,N)),
     NewTambahan is Aktif-Num,
     NewAktif is Aktif+Num,
-    assertz(InfoTentara(Player,NewAktif,NewTambahan)),
+    assertz(playerInformation(Player,NewAktif,NewTambahan)),
     Nl is N + Num, 
-    assertz(JmlhTentara(Wilayah,Nl)),
+    assertz(mapInformation(Player,Wilayah,Nl)),
     write(Player),
     write(' meletakkan '),
     write(Num),
     write(' tentara di wilayah'),
     write(Wilayah),
     write('.'),
-    write('Terdapat ')
+    write('Terdapat '),
     write(NewTambahan),
     write(' tentara yang tersisa.').
-draft(Wilayah,Num):-
+draft(Wilayah,_):-
     retract(currentPlayer(Player)), 
-    retract(WilayahMilik(Wilayah,Pemilik)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik \== Player,
     write('Player '),
     write(Player),
@@ -91,9 +90,9 @@ draft(Wilayah,Num):-
     write(Wilayah).
 draft(Wilayah,Num):-
     retract(currentPlayer(Player)), 
-    retract(WilayahMilik(Wilayah,Pemilik)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik == Player,
-    retract(InfoTentara(Player,Aktif,Tambahan)),
+    retract(playerInformation(Player,_,Tambahan,_,_)),
     Num > Tambahan,
     write('Player '),
     write(Player),
@@ -101,24 +100,24 @@ draft(Wilayah,Num):-
     write(Num),
     write(' tentara tambahan di wilayah'),
     write(Wilayah),
-    write('Pasukan tidak mencukupi.').
+    write('Pasukan tidak mencukupi.'),
     write('Jumlah Pasukan Tambahan Player '),
     write(Player),
     write(': '),
-    write(Tambahan)
+    write(Tambahan),
     write('draft dibatalkan.').
 draft(Wilayah,Num):-
     retract(currentPlayer(Player)), 
-    retract(WilayahMilik(Wilayah,Pemilik)),
+    retract(mapInformation(Pemilik,Wilayah,_)),
     Pemilik == Player,
-    retract(InfoTentara(Player,Aktif,Tambahan)),
-    Num <= Aktif,
-    retract(JmlhTentara(Wilayah,N)),
+    retract(playerInformation(Player,Aktif,_,_,_)),
+    Num =< Aktif,
+    retract(mapInformation(Player,Wilayah,N)),
     NewTambahan is Aktif-Num,
     NewAktif is Aktif+Num,
-    assertz(InfoTentara(Player,NewAktif,NewTambahan)),
+    assertz(playerInformation(Player,NewAktif,NewTambahan)),
     Nl is N + Num, 
-    assertz(JmlhTentara(Wilayah,Nl)),
+    assertz(mapInformation(Player,Wilayah,Nl)),
     write('Player '),
     write(Player),
     write(' meletakkan '),
@@ -146,40 +145,38 @@ randomFirstArgument(Second, RandomFirst) :-
 
 placeAutomatic:-
     retract(currentPlayer(Player)),
-    retract(InfoTentara(Player,Aktif,Tambahan)),
+    retract(playerInformation(Player,_,Tambahan,_,_)),
     Tambahan == 0,
     write('Seluruh tentara '),
     write(Player),
     write(' sudah diletakkan.').
 placeAutomatic:-
     retract(currentPlayer(Player)),
-    retract(InfoTentara(Player,Aktif,Tambahan)),
+    retract(playerInformation(Player,Aktif,Tambahan,_,_)),
     Tambahan \== 0,
     random(1,Tambahan,Num),
-    retract(Wilayah,Pemilik),
+    retract(_,Wilayah,_),
     randomFirstArgument(Player,Wilayah),
-    retract(JmlhTentara(Wilayah,N)),
+    retract(mapInformation(Player,Wilayah,N)),
     NewTambahan is Aktif-Num,
     NewAktif is Aktif+Num,
-    assertz(InfoTentara(Player,NewAktif,NewTambahan)),
+    assertz(playerInformation(Player,NewAktif,NewTambahan)),
     Nl is N + Num, 
-    assertz(JmlhTentara(Wilayah,Nl)),
+    assertz(mapInformation(Player,Wilayah,Nl)),
     placeAutomatic.
 checkLocationDetail(KodeWilayah):-
     write('Kode                     :'),
     write(KodeWilayah),
     write('Nama                     :'),
     namaWilayah(KodeWilayah,Nama),
-    asdkdakdm(KodeWilayah,Nama)
+    retract(mapInformation(Player,KodeWilayah,N)),
+    tetangga(KodeWilayah,Sebelah),
     write(Nama),
     write('Pemilik                  :'),
-    retract(WilayahMilik(KodeWilayah,Pemilik)),
-    write(Pemilik),
+    write(Player),
     write('Total Tentara            :'),
-    retract(JmlhTentara(KodeWilayah,N)),
     write(N),
     write('Tetangga                 :'),
-    tetangga(KodeWilayah,Sebelah),
     write(Sebelah).
 checkPlayerDetail(Player):-
     (   (PlayerLabel == 'p1') -> 
@@ -191,14 +188,14 @@ checkPlayerDetail(Player):-
     ;   (PlayerLabel == 'p4') -> 
         Label is 4
     ),
-    write('Nama                     :'),
     labelpemain(PlayerName, Label),
+    retract(benuaMilik(Benua,Player)),
+    retract(playerInformation(PlayerName,Aktif,Tambahan,Total,_)),
+    write('Nama                     :'),
     write(PlayerName),
     write('Benua                    :'),
-    retract(benuaMilik(Benua,Player)),
     write(Benua),
     write('Total Wilayah            :'),
-    retract(playerInformation(PlayerName,Aktif,Tambahan,Total,List))
     write(Total),
     write('Total Tentara Aktif      :'),
     write(Aktif),
