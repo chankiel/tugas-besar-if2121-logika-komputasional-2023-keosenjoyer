@@ -68,42 +68,52 @@ printListKodeWilayah([KodeWilayah | Tail]) :-
     printListKodeWilayah(Tail).
 
 placeTroops(Wilayah,Num):-
-    retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,N)),
-    assertz(mapInformation(Pemilik,Wilayah,N)),
-    assertz(currentPlayer(Player)), 
+    currentPlayer(Player), 
+    mapInformation(Pemilik,Wilayah,N),
     Pemilik \== Player,
-    write('Wilayah tersebut dimiliki pemain lain.'),
-    write('Silahkan pilih wilayah lain.'),!.
+    write('Wilayah tersebut dimiliki pemain lain.'),nl,
+    write('Silahkan pilih wilayah lain.'),nl,
+    write('Giliran '),
+    write(Player),
+    write(' untuk meletakkan tentaranya.'),!.
 placeTroops(Wilayah,Num):-
-    retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,N)),
-    assertz(mapInformation(Pemilik,Wilayah,N)),
-    assertz(currentPlayer(Player)), 
+    currentPlayer(Player), 
+    mapInformation(Pemilik,Wilayah,N),
     Pemilik == Player,
-    retract(playerInformation(Player,Aktif,Tambahan,_,_)),
-    Num > Tambahan,
-    assertz(playerInformation(Player,Aktif,Tambahan,_,_)),
-    assertz(mapInformation(Pemilik,Wilayah,N)),
-    assertz(currentPlayer(Player)), 
-    write('Jumlah tentara tidak cukup.'),!.
+    playerInformation(Player,Aktif,Tambahan,_),
+    @>(Num,Tambahan),
+    write('Jumlah tentara tidak cukup.'),nl,
+    write('Giliran '),
+    write(Player),
+    write(' untuk meletakkan tentaranya.'),!.
 placeTroops(Wilayah,Num):-
-    Num =< Aktif,
+    retract(currentPlayer(Player)),
+    retract(mapInformation(Pemilik,Wilayah,N)),
+    Pemilik == Player,
+    retract(playerInformation(Player,Aktif,Tambahan,BanyakWilayah)),
+    @=<(Num,Tambahan), 
     NewTambahan is Tambahan-Num,
     NewAktif is Aktif+Num,
     Nl is N + Num, 
-    assertz(playerInformation(Player,NewAktif,NewTambahan,_,_)),
+    assertz(playerInformation(Player,NewAktif,NewTambahan,BanyakWilayah)),
     assertz(mapInformation(Player,Wilayah,Nl)),
-    assertz(currentPlayer(Player)), 
     write(Player),
     write(' meletakkan '),
     write(Num),
-    write(' tentara di wilayah'),
+    write(' tentara di wilayah '),
     write(Wilayah),
-    write('.'),
+    write('.'),nl,
     write('Terdapat '),
     write(NewTambahan),
-    write(' tentara yang tersisa.'),!.
+    write(' tentara yang tersisa.'),nl,
+    retract(urutanPemain(ListPlayer)),
+    rotate_list(ListPlayer, NextListPlayer),
+    NextListPlayer = [NewCurrentPlayer, _],
+    assertz(urutanPemain(NextListPlayer)), 
+    assertz(currentPlayer(NewCurrentPlayer)),
+    write('Giliran '),
+    write(NewCurrentPlayer),
+    write(' untuk meletakkan tentaranya.'),!.
 draft(Wilayah,_):-
     retract(currentPlayer(Player)), 
     retract(mapInformation(Pemilik,Wilayah,_)),
@@ -111,7 +121,7 @@ draft(Wilayah,_):-
     write('Player '),
     write(Player),
     write(' tidak memiliki wilayah '),
-    write(Wilayah),!.
+    write(Wilayah).
 draft(Wilayah,Num):-
     retract(currentPlayer(Player)), 
     retract(mapInformation(Pemilik,Wilayah,_)),

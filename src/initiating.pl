@@ -76,7 +76,7 @@ announce_order([Player | Rest], X) :-
     write(Player),
     assertz(playerInformation(Player,0,X,0)),
     (   Rest \= [] -> write(' - '); true ),
-    announce_order(Rest,X).
+    announce_order(Rest, X).
 
 rotate_list([Head|Tail], RotatedList) :-
     append(Tail, [Head], RotatedList).

@@ -21,14 +21,14 @@ displayMap :- write('###########################################################
              write('#       South America           #         Africa           #          Australia                 #\n'),
              write('#################################################################################################\n').
 
-/*
+
 takeLocation(KodeWilayah):- 
     \+ wilayah(KodeWilayah),
     write('Tidak ada wilayah tersebut'),!.
 takeLocation(KodeWilayah):- 
-    retract(mapInformation(KodeWilayah,Pemilik,_)),
+    retract(mapInformation(KodeWilayah,_,_)),
     !,
-    assertz(mapInformation(KodeWilayah,Pemilik,_)),
+    assertz(mapInformation(KodeWilayah,_,_)),
     write('Wilayah sudah dikuasai. Tidak bisa mengambil.'),nl,
     retract(currentPlayer(Player)),
     write('Giliran '),
@@ -37,7 +37,7 @@ takeLocation(KodeWilayah):-
     assertz(currentPlayer(Player)).
 takeLocation(KodeWilayah):- 
     retract(currentPlayer(Player)), 
-    assertz(mapInformation(KodeWilayah,Player,_)), 
+    assertz(mapInformation(Player,KodeWilayah,0)), 
     write(Player),
     write(' mengambil wilayah '),
     write(KodeWilayah),
@@ -254,4 +254,4 @@ attack :-
         getIndex(Y, HasilLoc, Pilihan),
         mapInformation(Enemy, HasilLoc, EnemyTroops)
         /* ambil info wilayah yang dipilih */
-    ).
+    
