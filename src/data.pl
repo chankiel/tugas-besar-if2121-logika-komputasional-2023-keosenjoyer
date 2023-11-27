@@ -17,6 +17,9 @@
 
 risk_content(['CEASEFIRE ORDER','SUPER SOLDIER SERUM','AUXILIARY TROOPS','REBELLION','DISEASE OUTBREAK','SUPPLY CHAIN']).
 
+listLength([],0).
+listLength([_|Xs],N) :- listLength(Xs,M), N is M+1.
+
 /* inisialisasi */
 inisialisasiMapInformation:-
     assertz(mapInformation(null,na1,0)),
@@ -83,6 +86,31 @@ wilayah(a6).
 wilayah(a7).
 wilayah(au1).
 wilayah(au2).
+
+namaWilayah(na1, canada).
+namaWilayah(na2, greenland).
+namaWilayah(na3, mexico).
+namaWilayah(na4, cuba).
+namaWilayah(na5, jamaica).
+namaWilayah(sa1, brazil).
+namaWilayah(sa2, argentina).
+namaWilayah(e1, italy).
+namaWilayah(e2, germany).
+namaWilayah(e3, france).
+namaWilayah(e4, netherlands).
+namaWilayah(e5, switzerland).
+namaWilayah(af1, nigeria).
+namaWilayah(af2, kenya).
+namaWilayah(af3, ghana).
+namaWilayah(a1, china).
+namaWilayah(a2, indonesia).
+namaWilayah(a3, singapore).
+namaWilayah(a4, jepang).
+namaWilayah(a5, korea).
+namaWilayah(a6, malaysia).
+namaWilayah(a7, vietnam).
+namaWilayah(au1, sydney).
+namaWilayah(au2, melbourne).
 
 tetangga(Kode1,Kode2).
 tetangga(na1,na2).

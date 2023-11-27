@@ -35,9 +35,6 @@ validate_num_players(_) :-
     write('Mohon masukkan angka antara 2 - 4.\n'),
     startGame.
 
-listLength([],0).
-listLength([_|Xs],N) :- listLength(Xs,M), N is M+1.
-
 get_player_names(0, []) :- !.
 get_player_names(Num, [Name|Rest]) :-
     NewNum is Num - 1,
