@@ -127,58 +127,6 @@ placeTroops(Wilayah,Num):-
     currentPlayer(X),
     write(X),
     write(' untuk meletakkan tentaranya.'),!.
-draft(Wilayah,_):-
-    retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,_)),
-    Pemilik \== Player,
-    write('Player '),
-    write(Player),
-    write(' tidak memiliki wilayah '),
-    write(Wilayah).
-draft(Wilayah,Num):-
-    retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,_)),
-    Pemilik == Player,
-    retract(playerInformation(Player,_,Tambahan,_,_)),
-    Num > Tambahan,
-    write('Player '),
-    write(Player),
-    write(' meletakkan '),
-    write(Num),
-    write(' tentara tambahan di wilayah'),
-    write(Wilayah),
-    write('Pasukan tidak mencukupi.'),
-    write('Jumlah Pasukan Tambahan Player '),
-    write(Player),
-    write(': '),
-    write(Tambahan),
-    write('draft dibatalkan.').
-draft(Wilayah,Num):-
-    retract(currentPlayer(Player)), 
-    retract(mapInformation(Pemilik,Wilayah,_)),
-    Pemilik == Player,
-    retract(playerInformation(Player,Aktif,_,_,_)),
-    Num =< Aktif,
-    retract(mapInformation(Player,Wilayah,N)),
-    NewTambahan is Aktif-Num,
-    NewAktif is Aktif+Num,
-    assertz(playerInformation(Player,NewAktif,NewTambahan)),
-    Nl is N + Num, 
-    assertz(mapInformation(Player,Wilayah,Nl)),
-    write('Player '),
-    write(Player),
-    write(' meletakkan '),
-    write(Num),
-    write(' tentara tambahan di wilayah'),
-    write(Wilayah),
-    write('Tentara total di'),
-    write(Wilayah),
-    write(': '),
-    write(Nl),
-    write('Jumlah Pasukan Tambahan Player '),
-    write(Player),
-    write(': '),
-    write(NewTambahan).
 
 getFirstArguments(Pemilik, WilayahList) :-
     findall(Wilayah, mapInformation(Pemilik, Wilayah, N), WilayahList).
