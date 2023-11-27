@@ -1,7 +1,7 @@
 :- include('initiating.pl').  
-:- include('data.pl')
+:- include('data.pl').
 /* Rule */
-throw2Dice(X).           
+       
 
 checkPlayerTerritories(PlayerLabel) :-
     (   (PlayerLabel == 'p1') -> 
