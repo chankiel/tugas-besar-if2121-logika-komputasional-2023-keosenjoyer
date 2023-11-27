@@ -170,15 +170,15 @@ checkLocationDetail(KodeWilayah):-
     write(KodeWilayah),
     write('Nama                     :'),
     namaWilayah(KodeWilayah,Nama),
+    retract(mapInformation(KodePemilik,Wilayah,Jumlah)),
+    retract(mapInformation(Player,KodeWilayah,N)),
+    tetangga(KodeWilayah,Sebelah),
     write(Nama),
     write('Pemilik                  :'),
-    retract(mapInformation(KodePemilik,Wilayah,Jumlah)),
     write(Pemilik),
     write('Total Tentara            :'),
-    retract(mapInformation(Player,KodeWilayah,N)),
     write(N),
     write('Tetangga                 :'),
-    tetangga(KodeWilayah,Sebelah),
     write(Sebelah).
 checkPlayerDetail(Player):-
     (   (PlayerLabel == 'p1') -> 
@@ -190,14 +190,14 @@ checkPlayerDetail(Player):-
     ;   (PlayerLabel == 'p4') -> 
         Label is 4
     ),
-    write('Nama                     :'),
     labelpemain(PlayerName, Label),
+    retract(benuaMilik(Benua,Player)),
+    retract(playerInformation(PlayerName,Aktif,Tambahan,Total,List)),
+    write('Nama                     :'),
     write(PlayerName),
     write('Benua                    :'),
-    retract(benuaMilik(Benua,Player)),
     write(Benua),
     write('Total Wilayah            :'),
-    retract(playerInformation(PlayerName,Aktif,Tambahan,Total,List)),
     write(Total),
     write('Total Tentara Aktif      :'),
     write(Aktif),
