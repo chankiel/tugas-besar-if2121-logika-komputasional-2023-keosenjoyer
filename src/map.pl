@@ -23,16 +23,37 @@ displayMap :- write('###########################################################
 
 /*
 takeLocation(KodeWilayah):- 
-    retract(currentPlayer(Player)), 
-    retract(WilayahMilik(KodeWilayah,Pemilik)),
-    Pemilik == NULL, 
-    assertz(WilayahMilik(KodeWilayah,Player)).
+    \+ wilayah(KodeWilayah),
+    write('Tidak ada wilayah tersebut'),!.
+takeLocation(KodeWilayah):- 
+    retract(mapInformation(KodeWilayah,Pemilik,_)),
+    !,
+    assertz(mapInformation(KodeWilayah,Pemilik,_)),
+    write('Wilayah sudah dikuasai. Tidak bisa mengambil.'),nl,
+    retract(currentPlayer(Player)),
+    write('Giliran '),
+    write(Player),
+    write(' untuk memilih wilayahnya.'),
+    assertz(currentPlayer(Player)).
 takeLocation(KodeWilayah):- 
     retract(currentPlayer(Player)), 
-    retract(WilayahMilik(KodeWilayah,Pemilik)),
-    Pemilik \== NULL, 
-    write('Wilayah sudah dikuasai. Tidak bisa mengambil.').
-*/
+    assertz(mapInformation(KodeWilayah,Player,_)), 
+    write(Player),
+    write(' mengambil wilayah '),
+    write(KodeWilayah),
+    write('.'),nl,
+    retract(urutanPemain(ListPlayer)),
+    rotate_list(ListPlayer, NextListPlayer),
+    NextListPlayer = [NewCurrentPlayer, _],
+    assertz(urutanPemain(NextListPlayer)), 
+    assertz(currentPlayer(NewCurrentPlayer)), 
+    write('Giliran '),
+    write(NewCurrentPlayer),
+    write(' untuk memilih wilayahnya.'),nl,
+    findall(Place, mapInformation(Place,_,_), ListWilayah),
+    listLength(ListWilayah, N),
+    N == 24,
+    write('Seluruh wilayah telah diambil pemain. Memulai pembagian sisa tentara.').
 
 loop1(X, Y) :-
     write('Pilihlah daerah yang ingin Anda mulai untuk melakukan penyerangan: '),
@@ -172,16 +193,17 @@ loop6:-
         retract(mapInformation(Enemy, HasilLoc, EnemyTroops)),
         assertz(mapInformation(Player, HasilLoc, BerapaYgMauDikirim)),
 
-        retract(playerInformation(Player, Trupaktip, Truptamba, Wilayahku, BerapaBenuaku)),
-        assertz(playerInformation(Player, Trupaktip, Truptamba, Wilayahku + 1, BerapaBenuaku)),
-        retract(playerInformation(Enemy, Trupaktipmu, Truptambamu, Wilayahmu, BerapaBenuamu)),
-        assertz(playerInformation(Enemy, Trupaktipmu - EnemyTroops, Truptambamu, Wilayahmu - 1, BerapaBenuamu))
+        retract(playerInformation(Player, Trupaktip, Truptamba, Wilayahku)),
+        assertz(playerInformation(Player, Trupaktip, Truptamba, Wilayahku + 1)),
+        retract(playerInformation(Enemy, Trupaktipmu, Truptambamu, Wilayahmu)),
+        assertz(playerInformation(Enemy, Trupaktipmu - EnemyTroops, Truptambamu, Wilayahmu - 1))
         /* Set Status Kedua Wilayah */
     ).
 
 
 attack :-
     write('Sekarang giliran Player '),
+    assertz(currentPlayer('Kiel')),
     currentPlayer(Player),
     write(Player),
     write(' menyerang!\n'),
