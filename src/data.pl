@@ -1,7 +1,7 @@
 
 /* Nama pemain, Troops Aktif, Troops Tambahan, Wilayah yang dimiliki, Benua yang dimiliki (maksudnya wilayahnya ada di benua mana aja)*/
 :- dynamic(playerInformation/5). 
-/ Nama pemilik, Kode wilayah, Troops pemilik pada wilayah tersebut*/
+/* Nama pemilik, Kode wilayah, Troops pemilik pada wilayah tersebut*/
 :- dynamic(mapInformation/3).
 /* List player sesuai urutan main inisialisasi*/
 :- dynamic(urutanPemain/1).
@@ -11,6 +11,10 @@
 :- dynamic(currentPlayer/1).
 /* Nama dan Benua */
 :- dynamic(bonusBenua/2).
+/* Nama dan risk card sekarang */
+:- dynamic(riskStat/2).
+
+risk_content(['CEASEFIRE ORDER','SUPER SOLDIER SERUM','AUXILIARY TROOPS','REBELLION','DISEASE OUTBREAK','SUPPLY CHAIN']).
 
 bonusTentara(X,Y). 
 bonusTentara(amerikautara,3).
