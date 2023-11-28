@@ -40,7 +40,7 @@ attack:-
     ;riskStat(P,'SUPER SOLDIER SERUM')->
         rollAttack(CTroops,Res1,2)
     ;rollAttack(CTroops,Res1,3)
-    )
+    ).
     write('Total: '),write(Res1),nl,
 
     write('Player '),write(Name),nl,
@@ -49,7 +49,7 @@ attack:-
     ;riskStat(P,'SUPER SOLDIER SERUM')->
         rollAttack(TroopsTarget,Res2,2)
     ;rollAttack(TroopsTarget,Res2,3)
-    )
+    ).
     (Res1>Res2->
         write('Player '),write(P),write('menang! Wilayah '),write(LocTarget),
         write('sekarang dikuasai oleh Player '),write(P),nl,
@@ -64,7 +64,7 @@ attack:-
         retract(playerInformation(Name,AktifP,PasifP,NumWill)),
         NewAktif is AktifP-TroopsTarget,
         NumWillT is NumWilT-1,
-        assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)).
+        assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
         write('Tentara di wilayah '),write(Ori),write(': '),write(OriTroops),nl,
         write('Tentara di wilayah '),write(LocTarget),write(': '),write(ResStay),nl
     ;
@@ -115,16 +115,16 @@ inputTroops(X,Res,Type):-
     ;
         write('Banyak tentara tidak valid. Silahkan input kembali.'),nl,
         inputTroops(Z),Res = Z
-    )
+    ).
 
 inputChoice(ListTarget,X,Y):-
     write('Pilih: '),
     read(Z),
-    (Z<=X,Z>=1->
+    (Z=<X,Z>=1->
         getElmt(ListTarget,Z,Res),
         mapInformation(Name,Res,_),
         (riskStat(Name,'CEASEFIRE ORDER')->
-            write('Tidak bisa menyerang!\nWilayah ini dalam pengaruh CEASEFIRE ORDER.\n')
+            write('Tidak bisa menyerang!\nWilayah ini dalam pengaruh CEASEFIRE ORDER.\n'),
             inputChoice(ListTarget,X,YNew), Y = YNew
         ;
             Y = Z
@@ -132,7 +132,7 @@ inputChoice(ListTarget,X,Y):-
     ;
         write('Input tidak valid. Silahkan input kembali.'),nl,
         inputChoice(A), Y = Z
-    )
+    ).
 
 printTargets([H],Idx):-
     write(Idx),write('. '),write(H),nl.
