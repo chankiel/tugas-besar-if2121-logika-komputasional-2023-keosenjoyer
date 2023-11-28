@@ -419,6 +419,21 @@ init:-
     assertz(labelpemain(kiel,2)),
     assertz(labelpemain(ben,3)).
 
+inputRisk(Y):-
+    write('Masukan angka: '),
+    read(Pilihan),
+    (
+        Pilihan > 6 ->
+        write('Angka tidak valid!\n'),
+        inputRisk(Y)
+    ;
+        Pilihan < 1 ->
+        write('Angka tidak valid!\n'),
+        inputRisk(Y)
+    ;
+        Y is Pilihan
+    ).
+
 cheatAmbilKartu:-
     currentPlayer(Player),
     write('Pilih kartu risk yang ingin diambil '),nl,
@@ -428,8 +443,8 @@ cheatAmbilKartu:-
     write('4. Rebellion'),nl,
     write('5. Disease Outbreak'),nl,
     write('6. Supply Chain Issue'),nl,
-    write('Masukan angka: '),
-    read(Angka),
+
+    inputRisk(Angka),
     (   (Angka == 1) -> 
         assertz(riskStat(Player,'CEASEFIRE ORDER')),
         write('Anda mendapat kartu risk Ceasefire Order')
