@@ -21,18 +21,19 @@ attack:-
 attack:-
     currentPlayer(P),
     write('Sekarang giliran Player '),write(P), write(' menyerang.'),nl,
-    inputAsal(Ori),
+    inputAsal(Ori,P),
     write('Player '),write(P),write(' ingin memulai penyerangan dari daerah '),write(Ori),nl,
-    retract(mapInformation(P,Ori,Troops)),
+    mapInformation(P,Ori,Troops),
     write('Dalam daerah '),write(Ori),write(', Anda memiliki sebanyak '),write(Troops),write(' tentara.'),nl,
     inputTroops(Troops,CTroops,1),
-    write('Player '),write(P),write(' mengirim sebanyak '),write(CTroops),
-    findall(Neigh,tetangga(Ori,Neigh),ListNeigh),
+    write('Player '),write(P),write(' mengirim sebanyak '),write(CTroops),nl,
+    findall(Neigh, (tetangga(Ori, Neigh), mapInformation(OwnerOri, Ori, _), mapInformation(OwnerNeigh, Neigh, _), OwnerOri \== OwnerNeigh), ListNeigh),
     printTargets(ListNeigh,1),
     listLength(ListNeigh,NTargets),
-    inputChoice(NTargets,Target),
+    inputChoice(ListNeigh,NTargets,Target),
     getElmt(ListNeigh,Target,LocTarget),
-    retract(mapInformation(Name,LocTarget,TroopsTarget)),
+    mapInformation(Name,LocTarget,TroopsTarget),
+    /* Perang Mulai */
     write('Perang telah dimulai.'),nl,
     write('Player '),write(P),nl,
     (riskStat(P,'DISEASE OUTBREAK')->
@@ -40,45 +41,55 @@ attack:-
     ;riskStat(P,'SUPER SOLDIER SERUM')->
         rollAttack(CTroops,Res1,2)
     ;rollAttack(CTroops,Res1,3)
-    ).
+    ),
     write('Total: '),write(Res1),nl,
 
     write('Player '),write(Name),nl,
-    (riskStat(P,'DISEASE OUTBREAK')->
+    (riskStat(Name,'DISEASE OUTBREAK')->
         rollAttack(TroopsTarget,Res2,1)
-    ;riskStat(P,'SUPER SOLDIER SERUM')->
+    ;riskStat(Name,'SUPER SOLDIER SERUM')->
         rollAttack(TroopsTarget,Res2,2)
     ;rollAttack(TroopsTarget,Res2,3)
-    ).
-    (Res1>Res2->
-        write('Player '),write(P),write('menang! Wilayah '),write(LocTarget),
+    ),
+    write('Total: '),write(Res2),nl,
+    retract(mapInformation(P,Ori,Troops)),
+    retract(mapInformation(Name,LocTarget,TroopsTarget)),
+    (@>(Res1,Res2)->
+        write('Player '),write(P),write(' menang! Wilayah '),write(LocTarget),
         write('sekarang dikuasai oleh Player '),write(P),nl,
         MaxTroops is CTroops+1,
         inputTroops(MaxTroops,ResStay,2),
+        /* Update Jmlh troops di LocTarget dan di Ori */
         assertz(mapInformation(P,LocTarget,ResStay)),
         OriTroops is Troops-ResStay,
         assertz(mapInformation(P,Ori,OriTroops)),
+        /* Nambahin jmlh wilayah P sbnyk 1 */
         retract(playerInformation(P,Temp1,Temp2,NumWil)),
         NumWilT is NumWil+1,
         assertz(playerInformation(P,Temp1,Temp2,NumWilT)),
+        /* update tentara aktif dan jumlah wilayah si Name */
         retract(playerInformation(Name,AktifP,PasifP,NumWill)),
         NewAktif is AktifP-TroopsTarget,
         NumWillT is NumWilT-1,
         assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
+        assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
         write('Tentara di wilayah '),write(Ori),write(': '),write(OriTroops),nl,
         write('Tentara di wilayah '),write(LocTarget),write(': '),write(ResStay),nl
     ;
-        write('Player '),write(Name),write('menang! Sayang sekali penyerangan Anda gagal :( '),nl,
+        write('Player '),write(Name),write(' menang! Sayang sekali penyerangan Anda gagal :( '),nl,
+        /* Update troops di LocTarget sama Ori */
         assertz(mapInformation(Name,LocTarget,TroopsTarget)),
         OriTroops is Troops-CTroops,
         assertz(mapInformation(P,Ori,OriTroops)),
-        retract(playerInformation(P,Aktif1,Pasif2,NumWil1)),
+        /* Update pemain aktif si P dikurangin */
+        retract(playerInformation(P,Aktif1,Pasif1,NumWil1)),
         Aktif1T is Aktif1 - CTroops,
-        assertz(playerInformation(P,Aktif1,Pasif1,NumWil1)),
+        assertz(playerInformation(P,Aktif1T,Pasif1,NumWil1)),
         write('Tentara di wilayah '),write(Ori),write(': '),write(OriTroops),nl,
         write('Tentara di wilayah '),write(LocTarget),write(': '),write(TroopsTarget),nl
-    ).
-        
+    ),
+    retractall(riskStat(P,_)).
+
 rollAttack(0,0,_).
 rollAttack(NTroops,Sum,1):-
     write('Dadu '),write(NTroops),write(': 1.\n'),
@@ -90,48 +101,61 @@ rollAttack(NTroops,Sum,2):-
     NewNT is NTroops-1,
     rollAttack(NewNT,SumT,2),
     Sum is 6+SumT.
-rollAttack(NTroops,Sum,1):-
+rollAttack(NTroops,Sum,3):-
     random(1,7,Res),
     write('Dadu '),write(NTroops),write(': '),write(Res),nl,
     NewNT is NTroops-1,
     rollAttack(NewNT,SumT,3),
     Sum is Res+SumT.
 
-inputAsal(X):-
+inputAsal(X,P):-
     write('Piihlah daerah yang ingin Anda mulai untuk melakukan penyerangan: '),
     read(Y),
     (wilayah(Y)->
-        X = Y
+        (mapInformation(P,Y,Z)->
+            (Z\==1->
+                X = Y
+            ;
+                write('Jumlah troops di wilayah tersebut hanya satu. Pilih yang lain!\n'),
+                inputAsal(X,P)
+            )
+        ;write('Wilayah tersebut bukan milikmu. Pilih yang lain!\n'),
+         inputAsal(X,P)
+        )
     ;
      write('Daerah tidak valid. Silahkan input kembali.'),nl,
-     inputAsal(XReal), X = XReal
+     inputAsal(X,P)
     ).
 
-inputTroops(X,Res,Type):-
-    {Type==1,!,write('Masukkan banyak tentara yang akan bertempur: ');write('Silahkan tentukan banyaknya tentara yang menetap di wilayah tersebut: ')},
+inputTroops(MaxTroops, TroopCount, Type) :-
+    (Type == 1 ->
+        write('Masukkan banyak tentara yang akan bertempur: ');
+        write('Silahkan tentukan banyaknya tentara yang menetap di wilayah tersebut: ')
+    ),
     read(Y),
-    (Y<X,Y>=1->
-        Res = Y
-    ;
-        write('Banyak tentara tidak valid. Silahkan input kembali.'),nl,
-        inputTroops(Z),Res = Z
-    ).
+    ((Y > 1, @=<(Y,TroopCount),Type \== 1) ; (Y >= 1, Type == 1,@<(Y,TroopCount))),
+    !,
+    TroopCount = Y.
 
-inputChoice(ListTarget,X,Y):-
+inputTroops(MaxTroops, TroopCount, Type) :-
+    write('Banyak tentara tidak valid. Silahkan input kembali.'), nl,
+    inputTroops(MaxTroops, TroopCount, Type).
+
+inputChoice(ListTarget, X, Y) :-
     write('Pilih: '),
     read(Z),
-    (Z=<X,Z>=1->
-        getElmt(ListTarget,Z,Res),
-        mapInformation(Name,Res,_),
-        (riskStat(Name,'CEASEFIRE ORDER')->
+    (Z =< X, Z >= 1 ->
+        getElmt(ListTarget, Z, Res),
+        mapInformation(Name, Res, _),
+        (riskStat(_, 'CEASEFIRE ORDER') ->
             write('Tidak bisa menyerang!\nWilayah ini dalam pengaruh CEASEFIRE ORDER.\n'),
-            inputChoice(ListTarget,X,YNew), Y = YNew
+            inputChoice(ListTarget, X, Y)
         ;
             Y = Z
         )
     ;
-        write('Input tidak valid. Silahkan input kembali.'),nl,
-        inputChoice(A), Y = Z
+        write('Input tidak valid. Silahkan input kembali.'), nl,
+        inputChoice(ListTarget, X, Y)
     ).
 
 printTargets([H],Idx):-
@@ -214,16 +238,14 @@ endTurn:-
             write('Player '),write(NewCurrent),write(' mendapatkan '),write(RiskT),write('!\n'),
             AddTroopFinal is AddTroop2*2
         ;
-            AddTroopFinal is AddTroop2
+            AddTroopFinal = AddTroop2
         ),
         NewTroopsT is TroopsT+AddTroopFinal,
         assertz(playerInformation(NewCurrent,TroopsA,NewTroopsT,NumWil)),
         write('Player '),write(NewCurrent),write(' mendapatkan '),
         write(AddTroopFinal),write(' tentara tambahan.'),nl
     ),
-    (riskStat(NewCurrent,_)->
-        retract(riskStat(_,_))
-    ),!.
+    retract(riskStat(NewCurrent,_)).
 
 countBonus([],0).
 countBonus([H|T],Res):-
@@ -306,7 +328,20 @@ risk_message(3):-
     write('Tentara tambahan yang didapatkan pemain akan bernilai 2 kali lipat.'), nl.
 
 risk_message(4):-
-    write('Salah satu wilayah acak pemain akan berpindah kekuasaan menjadi milik lawan.'), nl.
+    currentPlayer(C),
+    \+mapInformation(C,_,_),!,
+    write('Salah satu wilayah acak pemain akan berpindah kekuasaan menjadi milik lawan.'), nl,
+    write('Eh tetapi Player '),write(C),write(' tidak punya wilayah, gajadi deh.'),nl.
+
+risk_message(4):-
+    write('Salah satu wilayah acak pemain akan berpindah kekuasaan menjadi milik lawan.'), nl,
+    currentPlayer(C),
+    urutanPemain(ListPlayer),
+    findall(X,(clause(playerInformation(X,_,_,_),X\==C)),ListP),
+    findall(Y,clause(mapInformation(C,Y,_)),ListW),
+    getPlayerWil(ListP,ListW,TargetP,TargetW),
+    updatePlayers(TargetP,C,TargetW),
+    write('Wilayah '),write(TargetW),write(' sekarang dikuasai oleh Player '), write(TargetP),nl.
 
 risk_message(5):-
     write('Hingga giliran berikutnya,'), nl,
@@ -315,22 +350,69 @@ risk_message(5):-
 risk_message(6):-
     write('Pada giliran berikutnya, pemain tidak mendapatkan tentara tambahan.'), nl.
 
-initTesting:-
+updatePlayers(Winner,Loser,TargetW):-
+    retract(mapInformation(Loser,TargetW,TroopsW)),
+    retract(playerInformation(Winner,AktifW,PasifW,NumWilW)),
+    retract(playerInformation(Loser,AktifL,PasifL,NumWilL)),
+    NumWilWNew is NumWilW + 1,
+    NumWilLNew is NumWilL - 1,
+    AktifWNew is AktifW + TroopsW,
+    AktifLNew is AktifL - TroopsW,
+    assertz(mapInformation(Winner,TargetW,TroopsW)),
+    assertz(playerInformation(Winner,AktifWNew,PasifW,NumWilWNew)),
+    assertz(playerInformation(Loser,AktifLNew,PasifL,NumWilLNew)).
+
+getPlayerWil(ListP,ListW,X,Y):-
+    listLength(ListP,LengthP), 
+    listLength(ListW,LengthW),
+    getRandom(ListP,LengthP,TargetP),
+    getRandom(ListW,LengthW,TargetW),
+    X = TargetP, Y = TargetW.
+
+getRandom(List,Length,Res):-
+    random(1,Length,RN),
+    getElmt(List,RN,ResT),
+    Res = ResT.
+
+init:-
+    retractall(riskStat(_,_)),
+    retractall(currentPlayer(_)),
+    retractall(urutanPemain(_)),
+    retractall(playerInformation(_,_,_,_)),
+    retractall(mapInformation(_,_,_)),
     assertz(currentPlayer(tes)),
     assertz(urutanPemain([kiel,ben,tes])),
     assertz(countAction(0,0)),
-    assertz(playerInformation(tes,0,0,8)),
-    assertz(playerInformation(kiel,0,0,8)),
-    assertz(playerInformation(ben,0,0,8)),
+    assertz(playerInformation(tes,16,0,8)),
+    assertz(playerInformation(kiel,16,0,8)),
+    assertz(playerInformation(ben,16,0,8)),
     assertz(mapInformation(tes,af1,2)),
     assertz(mapInformation(tes,af2,2)),
     assertz(mapInformation(tes,af3,2)),
-    assertz(mapInformation(kiel,a1,2)),
-    assertz(mapInformation(kiel,a2,2)),
-    assertz(mapInformation(kiel,a3,2)),
-    assertz(mapInformation(ben,a4,2)),
-    assertz(mapInformation(ben,a5,2)),
-    assertz(mapInformation(ben,a6,2)).
+    assertz(mapInformation(tes,a1,2)),
+    assertz(mapInformation(tes,a2,2)),
+    assertz(mapInformation(tes,a3,2)),
+    assertz(mapInformation(tes,a4,2)),
+    assertz(mapInformation(tes,a5,2)),
+    assertz(mapInformation(kiel,a6,2)),
+    assertz(mapInformation(kiel,a7,2)),
+    assertz(mapInformation(kiel,na5,2)),
+    assertz(mapInformation(kiel,na4,2)),
+    assertz(mapInformation(kiel,na3,2)),
+    assertz(mapInformation(kiel,na2,2)),
+    assertz(mapInformation(kiel,na1,2)),
+    assertz(mapInformation(kiel,sa1,2)),
+    assertz(mapInformation(ben,sa2,2)),
+    assertz(mapInformation(ben,e1,2)),
+    assertz(mapInformation(ben,e2,2)),
+    assertz(mapInformation(ben,e3,2)),
+    assertz(mapInformation(ben,e4,2)),
+    assertz(mapInformation(ben,e5,2)),
+    assertz(mapInformation(ben,au1,2)),
+    assertz(mapInformation(ben,au2,2)),
+    assertz(labelpemain(tes,1)),
+    assertz(labelpemain(kiel,2)),
+    assertz(labelpemain(ben,3)).
 
 inputRisk(Y):-
     write('Masukan angka: '),

@@ -114,7 +114,6 @@ namaWilayah(a7, vietnam).
 namaWilayah(au1, sydney).
 namaWilayah(au2, melbourne).
 
-tetangga(Kode1,Kode2).
 tetangga(na1,na2).
 tetangga(na2,na1).
 tetangga(na1,na3).
@@ -186,7 +185,6 @@ tetangga(au2,au1).
 tetangga(au2,sa2).
 tetangga(sa2,au2).
 
-partBenua(X,Y).
 partBenua(na1,amerikautara).
 partBenua(na2,amerikautara).
 partBenua(na3,amerikautara).
