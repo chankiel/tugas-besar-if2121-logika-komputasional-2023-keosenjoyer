@@ -259,18 +259,17 @@ attack :-
         mapInformation(Enemy, HasilLoc, EnemyTroops)
         /* ambil info wilayah yang dipilih */
     ).
-    
-cheatAkuisisiWilayah(Player,KodeWilayah):-
-    \+ playerInformation(Player,_,_,_),
-    write('Tidak ada player tersebut'),!.
-cheatAkuisisiWilayah(Player,KodeWilayah):-
+
+cheatAkuisisiWilayah(KodeWilayah):-
     \+ wilayah(KodeWilayah),
     write('Tidak ada wilayah tersebut'),!.
-cheatAkuisisiWilayah(Player,KodeWilayah):-
+cheatAkuisisiWilayah(KodeWilayah):-
+    currentPlayer(Player),
     mapInformation(Pemilik,KodeWilayah,N),
     Pemilik == Player,
     write('Wilayah tersebut milik anda.'),!.
-cheatAkuisisiWilayah(Player,KodeWilayah):-
+cheatAkuisisiWilayah(KodeWilayah):-
+    currentPlayer(Player),
     retract(mapInformation(Pemilik,KodeWilayah,N)),
     retract(playerInformation(Player,AktifPlayer,TambahanPlayer, BanyakWilayahPlayer)),
     retract(playerInformation(Pemilik,AktifPemilik,TambahanPemilik, BanyakWilayahPemilik)),

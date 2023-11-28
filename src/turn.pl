@@ -332,7 +332,22 @@ initTesting:-
     assertz(mapInformation(ben,a5,2)),
     assertz(mapInformation(ben,a6,2)).
 
-cheatAmbilKartu():-
+inputRisk(Y):-
+    write('Masukan angka: '),
+    read(Pilihan),
+    (
+        Pilihan > 6 ->
+        write('Angka tidak valid!\n'),
+        inputRisk(Y)
+    ;
+        Pilihan < 1 ->
+        write('Angka tidak valid!\n'),
+        inputRisk(Y)
+    ;
+        Y is Pilihan
+    ).
+
+cheatAmbilKartu:-
     currentPlayer(Player),
     write('Pilih kartu risk yang ingin diambil '),nl,
     write('1. Ceasefire Order'),nl,
@@ -341,30 +356,24 @@ cheatAmbilKartu():-
     write('4. Rebellion'),nl,
     write('5. Disease Outbreak'),nl,
     write('6. Supply Chain Issue'),nl,
-    write('Masukan angka: '),
-    read(Angka),
+
+    inputRisk(Angka),
     (   (Angka == 1) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'CEASEFIRE ORDER')),
         write('Anda mendapat kartu risk Ceasefire Order')
     ;(Angka == 2) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'SUPER SOLDIER SERUM')),
         write('Anda mendapat kartu risk Super Soldier Serum')
     ;(Angka == 3) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'AUXILIARY TROOPS')),
         write('Anda mendapat kartu risk Auxiliary Troops')
     ;(Angka == 4) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'REBELLION')),
         write('Anda mendapat kartu risk Rebellion')
     ;(Angka == 5) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'DISEASE OUTBREAK')),
         write('Anda mendapat kartu risk Disease Outbreak')
     ;(Angka == 6) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'SUPPLY CHAIN ISSUE')),
         write('Anda mendapat kartu risk Supply Chain Issue')
     ).
