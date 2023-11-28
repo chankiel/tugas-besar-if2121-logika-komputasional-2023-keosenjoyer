@@ -67,17 +67,20 @@ printListKodeWilayah([KodeWilayah | Tail]) :-
     write('Jumlah tentara : '), write(JumlahTentara), nl, nl,
     printListKodeWilayah(Tail).
 
-nextPlayer(Player):-
+nextPlayer(ListPlayer,Player):-
+    ListPlayer = [X|_],
+    X == Player.
+nextPlayer(ListPlayer,Player):-    
     playerInformation(Player,_,Tambahan,_),
     Tambahan \== 0,!.
-nextPlayer(Player):-
+nextPlayer(ListPlayer,Player):-
     retract(currentPlayer(Player)),
-    retract(urutanPemain(ListPlayer)),
-    rotate_list(ListPlayer, NextListPlayer),
+    retract(urutanPemain(ListPlayerNow)),
+    rotate_list(ListPlayerNow, NextListPlayer),
     NextListPlayer = [NewCurrentPlayer| _],
     assertz(urutanPemain(NextListPlayer)), 
     assertz(currentPlayer(NewCurrentPlayer)),
-    nextPlayer(NewCurrentPlayer).
+    nextPlayer(ListPlayer,NewCurrentPlayer).
 placeTroops(Wilayah,Num):-
     currentPlayer(Player), 
     mapInformation(Pemilik,Wilayah,N),
@@ -122,7 +125,7 @@ placeTroops(Wilayah,Num):-
     NextListPlayer = [NewCurrentPlayer| _],
     assertz(urutanPemain(NextListPlayer)), 
     assertz(currentPlayer(NewCurrentPlayer)),
-    nextPlayer(NewCurrentPlayer),
+    nextPlayer(ListPlayer,NewCurrentPlayer),
     write('Giliran '),
     currentPlayer(X),
     write(X),
@@ -203,11 +206,15 @@ placeAutomatic:-
     NextListPlayer = [NewCurrentPlayer| _],
     assertz(urutanPemain(NextListPlayer)), 
     assertz(currentPlayer(NewCurrentPlayer)),
-    nextPlayer(NewCurrentPlayer),
-    write('Giliran '),
+    nextPlayer(ListPlayer,NewCurrentPlayer),
     currentPlayer(X),
+    write('Giliran '),
     write(X),
-    write(' untuk meletakkan tentaranya.'),!.
+    write(' untuk meletakkan tentaranya.'),nl,!,
+    Player == X,
+    write('Seluruh pemain telah meletakkan sisa tentara.'),nl,
+    write('Memulai permainan.').
+
 placeAutomatic:-
     currentPlayer(Player), 
     retract(playerInformation(Player,Aktif,Tambahan,BanyakWilayah)),
@@ -226,6 +233,8 @@ placeAutomatic:-
     write(' tentara di wilayah '),
     write(Wilayah),nl,
     placeAutomatic,!.
+
+
 checkLocationDetail(KodeWilayah):-
     mapInformation(Player,KodeWilayah,N),
     write('Kode                     :'),
