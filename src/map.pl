@@ -83,7 +83,7 @@ takeLocation(KodeWilayah):-
     listLength(ListWilayah, N),
     N == 24,
     write('Seluruh wilayah telah diambil pemain. Memulai pembagian sisa tentara.').
-
+/*
 cheatAkuisisiWilayah(Player,KodeWilayah):-
     \+ playerInformation(Player,_,_,_),
     write('Tidak ada player tersebut'),!.
@@ -95,6 +95,7 @@ cheatAkuisisiWilayah(KodeWilayah):-
     mapInformation(Pemilik,KodeWilayah,N),
     Pemilik == Player,
     write('Wilayah tersebut milik anda.'),!.
+*/
 cheatAkuisisiWilayah(KodeWilayah):-
     currentPlayer(Player),
     retract(mapInformation(Pemilik,KodeWilayah,N)),
