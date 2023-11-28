@@ -17,21 +17,20 @@ checkIncomingTroops(PlayerLabel) :-
     write('Total wilayah : '), write(BanyakWilayah), nl,
     TentaraTambahan is BanyakWilayah div 2,
     write('Jumlah tentara tambahan dari wilayah : '), write(TentaraTambahan), nl,
-    (   infoBenua(NamaPlayer, ListBenuaYangDiconquer),
-        calculate_bonus_troops(ListBenuaYangDiconquer, BonusTroops),
+    findall(Benua, infoBenua(NamaPlayer, Benua), ListBenuaYangDiconquer),
+    (   
+        ListBenuaYangDiconquer \== [] ->
+        calculate_bonus_troops(ListBenuaYangDiconquer, 0, BonusTroops),
         TotalTentaraTambahan is TentaraTambahan + BonusTroops,
         write('Total tentara tambahan : '), write(TotalTentaraTambahan), nl
     ;   write('Total tentara tambahan : '), write(TentaraTambahan), nl
     ),!.
 
-calculate_bonus_troops(ListBenua, TotalBonus) :-
-    calculate_bonus_troops(ListBenua, 0, TotalBonus).
-
 calculate_bonus_troops([], Acc, Acc).
 calculate_bonus_troops([Benua | Tail], Acc, TotalBonus) :-
     bonusTentara(Benua, Bonus),
     write('Bonus benua '), write(Benua), write(' : '), write(Bonus), nl,
-    NewAcc is Acc + Bonus,
+    NewAcc is Acc+Bonus,
     calculate_bonus_troops(Tail, NewAcc, TotalBonus).
 
 /*
