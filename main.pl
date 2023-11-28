@@ -4,5 +4,4 @@ startGame :-
     ['src/map.pl'],
     ['src/pemain.pl'],
     ['src/troops.pl'],
-    ['src/turn.pl'],
-    initialize.
+    ['src/turn.pl'].

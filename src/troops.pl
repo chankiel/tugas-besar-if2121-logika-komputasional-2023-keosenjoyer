@@ -17,12 +17,12 @@ checkIncomingTroops(PlayerLabel) :-
     write('Total wilayah : '), write(BanyakWilayah), nl,
     TentaraTambahan is BanyakWilayah div 2,
     write('Jumlah tentara tambahan dari wilayah : '), write(TentaraTambahan), nl,
-    (   bonusBenua(NamaPlayer, ListBenuaYangDiconquer),
+    (   infoBenua(NamaPlayer, ListBenuaYangDiconquer),
         calculate_bonus_troops(ListBenuaYangDiconquer, BonusTroops),
         TotalTentaraTambahan is TentaraTambahan + BonusTroops,
         write('Total tentara tambahan : '), write(TotalTentaraTambahan), nl
     ;   write('Total tentara tambahan : '), write(TentaraTambahan), nl
-    ).
+    ),!.
 
 calculate_bonus_troops(ListBenua, TotalBonus) :-
     calculate_bonus_troops(ListBenua, 0, TotalBonus).

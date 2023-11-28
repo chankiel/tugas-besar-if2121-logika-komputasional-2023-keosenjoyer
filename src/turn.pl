@@ -133,8 +133,7 @@ inputTroops(MaxTroops, TroopCount, Type) :-
         write('Silahkan tentukan banyaknya tentara yang menetap di wilayah tersebut: ')
     ),
     read(Y),
-    ((Y > 1, Type \== 1) ; (Y >= 1, Type == 1)),
-    Y =< MaxTroops,
+    ((Y > 1, @=<(Y,TroopCount),Type \== 1) ; (Y >= 1, Type == 1,@<(Y,TroopCount))),
     !,
     TroopCount = Y.
 
@@ -246,9 +245,7 @@ endTurn:-
         write('Player '),write(NewCurrent),write(' mendapatkan '),
         write(AddTroopFinal),write(' tentara tambahan.'),nl
     ),
-    (riskStat(NewCurrent,_)->
-        retract(riskStat(_,_))
-    ),!.
+    retract(riskStat(NewCurrent,_)).
 
 countBonus([],0).
 countBonus([H|T],Res):-
@@ -386,22 +383,38 @@ init:-
     assertz(currentPlayer(tes)),
     assertz(urutanPemain([kiel,ben,tes])),
     assertz(countAction(0,0)),
-    assertz(playerInformation(tes,0,0,8)),
-    assertz(playerInformation(kiel,0,0,8)),
-    assertz(playerInformation(ben,0,0,8)),
+    assertz(playerInformation(tes,16,0,8)),
+    assertz(playerInformation(kiel,16,0,8)),
+    assertz(playerInformation(ben,16,0,8)),
     assertz(mapInformation(tes,af1,2)),
-    assertz(mapInformation(kiel,sa2,2)),
-    assertz(mapInformation(kiel,e3,2)),
     assertz(mapInformation(tes,af2,2)),
     assertz(mapInformation(tes,af3,2)),
-    assertz(mapInformation(kiel,a1,2)),
-    assertz(mapInformation(kiel,a2,2)),
-    assertz(mapInformation(kiel,a3,2)),
-    assertz(mapInformation(ben,a4,2)),
-    assertz(mapInformation(ben,a5,2)),
-    assertz(mapInformation(ben,a6,2)).
+    assertz(mapInformation(tes,a1,2)),
+    assertz(mapInformation(tes,a2,2)),
+    assertz(mapInformation(tes,a3,2)),
+    assertz(mapInformation(tes,a4,2)),
+    assertz(mapInformation(tes,a5,2)),
+    assertz(mapInformation(kiel,a6,2)),
+    assertz(mapInformation(kiel,a7,2)),
+    assertz(mapInformation(kiel,na5,2)),
+    assertz(mapInformation(kiel,na4,2)),
+    assertz(mapInformation(kiel,na3,2)),
+    assertz(mapInformation(kiel,na2,2)),
+    assertz(mapInformation(kiel,na1,2)),
+    assertz(mapInformation(kiel,sa1,2)),
+    assertz(mapInformation(ben,sa2,2)),
+    assertz(mapInformation(ben,e1,2)),
+    assertz(mapInformation(ben,e2,2)),
+    assertz(mapInformation(ben,e3,2)),
+    assertz(mapInformation(ben,e4,2)),
+    assertz(mapInformation(ben,e5,2)),
+    assertz(mapInformation(ben,au1,2)),
+    assertz(mapInformation(ben,au2,2)),
+    assertz(labelpemain(tes,1)),
+    assertz(labelpemain(kiel,2)),
+    assertz(labelpemain(ben,3)).
 
-cheatAmbilKartu():-
+cheatAmbilKartu:-
     currentPlayer(Player),
     write('Pilih kartu risk yang ingin diambil '),nl,
     write('1. Ceasefire Order'),nl,

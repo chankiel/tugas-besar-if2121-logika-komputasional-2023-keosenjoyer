@@ -15,6 +15,7 @@ checkPlayerTerritories(PlayerLabel) :-
     write(PlayerName), nl,
     findall(KodeWilayah, mapInformation(PlayerName,KodeWilayah,_), ListOfKodeWilayah),
     findPlayerContinents(PlayerName, ListOfKodeWilayah, [], ListOfContinent),
+    write(ListOfContinent),
     detailsOfContinent(PlayerName,ListOfContinent), !.
 
 findPlayerContinents(_, [], ListOfContinents, ListOfContinents).
@@ -47,20 +48,20 @@ detailsOfContinent(PlayerName, [NamaBenua | Tail]) :-
     write(NamaBenua),
     write(' ('),
     findall(KodeWilayah, mapInformation(PlayerName,KodeWilayah,_), ListKodeWilayah),
+    write(ListKodeWilayah),nl,
     listLength(ListKodeWilayah, Y),
-    write(Y),
-    write('/'),
     findall(Wilayah, partBenua(Wilayah, NamaBenua), ListOfWilayah),
     listLength(ListOfWilayah,BanyakWilayah),
     write(BanyakWilayah),
+    write('/'),
+    write(Y),
     write(')'), nl,
     printListKodeWilayah(ListKodeWilayah),
-    detailsOfContinent(Tail).
+    detailsOfContinent(PlayerName,Tail).
 
 printListKodeWilayah([]).
 printListKodeWilayah([KodeWilayah | Tail]) :-
     write(KodeWilayah), nl,
-    % Assume namaWilayah/2 is defined to fetch the name of the territory
     namaWilayah(KodeWilayah, NamaWilayah),
     write('Nama : '), write(NamaWilayah), nl,
     mapInformation(_, KodeWilayah, JumlahTentara),
@@ -161,7 +162,9 @@ placeAutomatic:-
     write(' untuk meletakkan tentaranya.'),nl,!,
     Player == X,
     write('Seluruh pemain telah meletakkan sisa tentara.'),nl,
-    write('Memulai permainan.').
+    write('Memulai permainan.'),
+    retract(countAction(_,_)),
+    assertz(countAction(0,0)).
 
 placeAutomatic:-
     currentPlayer(Player), 
