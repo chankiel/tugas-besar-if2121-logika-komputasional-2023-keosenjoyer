@@ -49,7 +49,6 @@ inisialisasiMapInformation:-
     assertz(mapInformation(null,au1,0)),
     assertz(mapInformation(null,au2,0)).
 
-bonusTentara(X,Y). 
 bonusTentara(amerikautara,3).
 bonusTentara(amerikaselatan,2).
 bonusTentara(eropa,3).

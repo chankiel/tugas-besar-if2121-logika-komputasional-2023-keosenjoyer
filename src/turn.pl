@@ -129,17 +129,17 @@ inputAsal(X,P):-
 
 inputTroops(MaxTroops, TroopCount, Type) :-
     (Type == 1 ->
-        write('Masukkan banyak tentara yang akan bertempur: ');
-        write('Silahkan tentukan banyaknya tentara yang menetap di wilayah tersebut: ')
+        write('Masukkan banyak tentara yang akan bertempur: ')
+    ;   write('Silahkan tentukan banyak tentara yang menetap di wilayaht tersebut: ')
     ),
     read(Y),
-    ((Y > 1, @=<(Y,TroopCount),Type \== 1) ; (Y >= 1, Type == 1,@<(Y,TroopCount))),
-    !,
-    TroopCount = Y.
+    (((Type==1,Y>=1,Y<MaxTroops);(Type\==1,Y>1,Y=<MaxTroops))->
+        TroopCount = Y
+    ;
+        write('Banyak input tentara tidak valid. Silahkan coba lagi.'),nl,
+        inputTroops(MaxTroops,TroopCount,Type)
+    ).
 
-inputTroops(MaxTroops, TroopCount, Type) :-
-    write('Banyak tentara tidak valid. Silahkan input kembali.'), nl,
-    inputTroops(MaxTroops, TroopCount, Type).
 
 inputChoice(ListTarget, X, Y) :-
     write('Pilih: '),
@@ -238,7 +238,7 @@ endTurn:-
             write('Player '),write(NewCurrent),write(' mendapatkan '),write(RiskT),write('!\n'),
             AddTroopFinal is AddTroop2*2
         ;
-            AddTroopFinal = AddTroop2
+            AddTroopFinal is AddTroop2
         ),
         NewTroopsT is TroopsT+AddTroopFinal,
         assertz(playerInformation(NewCurrent,TroopsA,NewTroopsT,NumWil)),
@@ -410,6 +410,11 @@ init:-
     assertz(mapInformation(ben,e5,2)),
     assertz(mapInformation(ben,au1,2)),
     assertz(mapInformation(ben,au2,2)),
+    assertz(infoBenua(tes,afrika)),
+    assertz(infoBenua(tes,asia)),
+    assertz(infoBenua(ben,eropa)),
+    assertz(infoBenua(ben,australia)),
+    assertz(infoBenua(kiel,amerikautara)),
     assertz(labelpemain(tes,1)),
     assertz(labelpemain(kiel,2)),
     assertz(labelpemain(ben,3)).
@@ -426,27 +431,21 @@ cheatAmbilKartu:-
     write('Masukan angka: '),
     read(Angka),
     (   (Angka == 1) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'CEASEFIRE ORDER')),
         write('Anda mendapat kartu risk Ceasefire Order')
     ;(Angka == 2) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'SUPER SOLDIER SERUM')),
         write('Anda mendapat kartu risk Super Soldier Serum')
     ;(Angka == 3) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'AUXILIARY TROOPS')),
         write('Anda mendapat kartu risk Auxiliary Troops')
     ;(Angka == 4) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'REBELLION')),
         write('Anda mendapat kartu risk Rebellion')
     ;(Angka == 5) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'DISEASE OUTBREAK')),
         write('Anda mendapat kartu risk Disease Outbreak')
     ;(Angka == 6) -> 
-        retract(riskStat(Player,Risk)),
         assertz(riskStat(Player,'SUPPLY CHAIN ISSUE')),
         write('Anda mendapat kartu risk Supply Chain Issue')
     ).
