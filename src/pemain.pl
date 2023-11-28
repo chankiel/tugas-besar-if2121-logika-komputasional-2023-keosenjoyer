@@ -1,6 +1,7 @@
 :- include('data.pl').
 /* Rule */
 
+
 checkPlayerTerritories(PlayerLabel) :-
     (   (PlayerLabel == 'p1') -> 
         labelpemain(PlayerName, 1)
@@ -15,7 +16,6 @@ checkPlayerTerritories(PlayerLabel) :-
     write(PlayerName), nl,
     findall(KodeWilayah, mapInformation(PlayerName,KodeWilayah,_), ListOfKodeWilayah),
     findPlayerContinents(PlayerName, ListOfKodeWilayah, [], ListOfContinent),
-    write(ListOfContinent),
     detailsOfContinent(PlayerName,ListOfContinent), !.
 
 findPlayerContinents(_, [], ListOfContinents, ListOfContinents).
@@ -47,17 +47,27 @@ detailsOfContinent(PlayerName, [NamaBenua | Tail]) :-
     write('Benua '),
     write(NamaBenua),
     write(' ('),
-    findall(KodeWilayah, mapInformation(PlayerName,KodeWilayah,_), ListKodeWilayah),
-    write(ListKodeWilayah),nl,
-    listLength(ListKodeWilayah, Y),
+    findall(KodeWilayah, mapInformation(PlayerName,KodeWilayah,_), ListWilayahPunyaPlayer),
+    filterWilayahBaseOnBenua(ListWilayahPunyaPlayer, NamaBenua, [], FilteredWilayah),
+    listLength(FilteredWilayah,BanyakFiltered),
     findall(Wilayah, partBenua(Wilayah, NamaBenua), ListOfWilayah),
     listLength(ListOfWilayah,BanyakWilayah),
-    write(BanyakWilayah),
+    write(BanyakFiltered),
     write('/'),
-    write(Y),
+    write(BanyakWilayah),
     write(')'), nl,
-    printListKodeWilayah(ListKodeWilayah),
+    printListKodeWilayah(FilteredWilayah),
     detailsOfContinent(PlayerName,Tail).
+
+filterWilayahBaseOnBenua([], _, Temp, Temp).
+filterWilayahBaseOnBenua([CurrentWilayah | Tail], NamaBenua, Temp, FilteredWilayah) :-
+    (
+        partBenua(CurrentWilayah, NamaBenua) ->
+        append(Temp, [CurrentWilayah], NewTemp)
+    ;
+        NewTemp = Temp
+    ),
+    filterWilayahBaseOnBenua(Tail, NamaBenua, NewTemp, FilteredWilayah).
 
 printListKodeWilayah([]).
 printListKodeWilayah([KodeWilayah | Tail]) :-
