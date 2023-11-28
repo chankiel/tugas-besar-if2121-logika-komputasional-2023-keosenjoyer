@@ -25,9 +25,9 @@ takeLocation(KodeWilayah):-
     \+ wilayah(KodeWilayah),
     write('Tidak ada wilayah tersebut'),!.
 takeLocation(KodeWilayah):- 
-    retract(mapInformation(_,KodeWilayah,_)),
+    retract(mapInformation(Pemilik,KodeWilayah,N)),
     !,
-    assertz(mapInformation(_,KodeWilayah,_)),
+    assertz(mapInformation(Pemilik,KodeWilayah,N)),
     write('Wilayah sudah dikuasai. Tidak bisa mengambil.'),nl,
     retract(currentPlayer(Player)),
     write('Giliran '),

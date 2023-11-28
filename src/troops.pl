@@ -33,3 +33,4 @@ calculate_bonus_troops([Benua | Tail], Acc, TotalBonus) :-
     write('Bonus benua '), write(Benua), write(' : '), write(Bonus), nl,
     NewAcc is Acc + Bonus,
     calculate_bonus_troops(Tail, NewAcc, TotalBonus).
+
