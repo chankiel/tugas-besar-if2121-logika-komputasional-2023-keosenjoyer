@@ -21,14 +21,13 @@ displayMap :- write('###########################################################
              write('#       South America           #         Africa           #          Australia                 #\n'),
              write('#################################################################################################\n').
 
-
 takeLocation(KodeWilayah):- 
     \+ wilayah(KodeWilayah),
     write('Tidak ada wilayah tersebut'),!.
 takeLocation(KodeWilayah):- 
-    retract(mapInformation(KodeWilayah,_,_)),
+    retract(mapInformation(Pemilik,KodeWilayah,N)),
     !,
-    assertz(mapInformation(KodeWilayah,_,_)),
+    assertz(mapInformation(Pemilik,KodeWilayah,N)),
     write('Wilayah sudah dikuasai. Tidak bisa mengambil.'),nl,
     retract(currentPlayer(Player)),
     write('Giliran '),
@@ -37,7 +36,12 @@ takeLocation(KodeWilayah):-
     assertz(currentPlayer(Player)).
 takeLocation(KodeWilayah):- 
     retract(currentPlayer(Player)), 
-    assertz(mapInformation(Player,KodeWilayah,0)), 
+    retract(playerInformation(Player,Aktif,Tambahan,BanyakWilayah)),
+    NewAktif is Aktif + 1,
+    NewTambahan is Tambahan - 1,
+    NewBanyakWilayah is BanyakWilayah + 1,
+    assertz(mapInformation(Player,KodeWilayah,1)), 
+    assertz(playerInformation(Player,NewAktif,NewTambahan,NewBanyakWilayah)),
     write(Player),
     write(' mengambil wilayah '),
     write(KodeWilayah),
@@ -256,3 +260,28 @@ attack :-
         /* ambil info wilayah yang dipilih */
     ).
     
+cheatAkuisisiWilayah(Player,KodeWilayah):-
+    \+ playerInformation(Player,_,_,_),
+    write('Tidak ada player tersebut'),!.
+cheatAkuisisiWilayah(Player,KodeWilayah):-
+    \+ wilayah(KodeWilayah),
+    write('Tidak ada wilayah tersebut'),!.
+cheatAkuisisiWilayah(Player,KodeWilayah):-
+    mapInformation(Pemilik,KodeWilayah,N),
+    Pemilik == Player,
+    write('Wilayah tersebut milik anda.'),!.
+cheatAkuisisiWilayah(Player,KodeWilayah):-
+    retract(mapInformation(Pemilik,KodeWilayah,N)),
+    retract(playerInformation(Player,AktifPlayer,TambahanPlayer, BanyakWilayahPlayer)),
+    retract(playerInformation(Pemilik,AktifPemilik,TambahanPemilik, BanyakWilayahPemilik)),
+    NewAktifPemilik is AktifPemilik - N,
+    NewAktifPlayer is AktifPlayer + N,
+    NewBanyakWilayahPlayer is BanyakWilayahPlayer + 1,
+    NewBanyakWilayahPemilik is BanyakWilayahPemilik -1,
+    assertz(mapInformation(Player,KodeWilayah,N)),
+    assertz(playerInformation(Player,NewAktifPlayer,TambahanPlayer,NewBanyakWilayahPlayer)),
+    assertz(playerInformation(Pemilik,NewAktifPemilik,TambahanPemilik,NewBanyakWilayahPemilik)),
+    write('Wilayah '),
+    write(KodeWilayah),
+    write(' diakuisisi oleh '),
+    write(Player).

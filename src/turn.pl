@@ -72,6 +72,7 @@ attack:-
         NewAktif is AktifP-TroopsTarget,
         NumWillT is NumWilT-1,
         assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
+        assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
         write('Tentara di wilayah '),write(Ori),write(': '),write(OriTroops),nl,
         write('Tentara di wilayah '),write(LocTarget),write(': '),write(ResStay),nl
     ;
@@ -399,3 +400,40 @@ init:-
     assertz(mapInformation(ben,a4,2)),
     assertz(mapInformation(ben,a5,2)),
     assertz(mapInformation(ben,a6,2)).
+
+cheatAmbilKartu():-
+    currentPlayer(Player),
+    write('Pilih kartu risk yang ingin diambil '),nl,
+    write('1. Ceasefire Order'),nl,
+    write('2. Super Soldier Serum'),nl,
+    write('3. Auxiliary Troops'),nl,
+    write('4. Rebellion'),nl,
+    write('5. Disease Outbreak'),nl,
+    write('6. Supply Chain Issue'),nl,
+    write('Masukan angka: '),
+    read(Angka),
+    (   (Angka == 1) -> 
+        retract(riskStat(Player,Risk)),
+        assertz(riskStat(Player,'CEASEFIRE ORDER')),
+        write('Anda mendapat kartu risk Ceasefire Order')
+    ;(Angka == 2) -> 
+        retract(riskStat(Player,Risk)),
+        assertz(riskStat(Player,'SUPER SOLDIER SERUM')),
+        write('Anda mendapat kartu risk Super Soldier Serum')
+    ;(Angka == 3) -> 
+        retract(riskStat(Player,Risk)),
+        assertz(riskStat(Player,'AUXILIARY TROOPS')),
+        write('Anda mendapat kartu risk Auxiliary Troops')
+    ;(Angka == 4) -> 
+        retract(riskStat(Player,Risk)),
+        assertz(riskStat(Player,'REBELLION')),
+        write('Anda mendapat kartu risk Rebellion')
+    ;(Angka == 5) -> 
+        retract(riskStat(Player,Risk)),
+        assertz(riskStat(Player,'DISEASE OUTBREAK')),
+        write('Anda mendapat kartu risk Disease Outbreak')
+    ;(Angka == 6) -> 
+        retract(riskStat(Player,Risk)),
+        assertz(riskStat(Player,'SUPPLY CHAIN ISSUE')),
+        write('Anda mendapat kartu risk Supply Chain Issue')
+    ).

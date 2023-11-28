@@ -33,3 +33,17 @@ calculate_bonus_troops([Benua | Tail], Acc, TotalBonus) :-
     write('Bonus benua '), write(Benua), write(' : '), write(Bonus), nl,
     NewAcc is Acc + Bonus,
     calculate_bonus_troops(Tail, NewAcc, TotalBonus).
+
+cheatTambahTentara(Player,N):-
+    \+ playerInformation(Player,_,_,_),
+    write('Tidak ada player tersebut'),!.
+cheatTambahTentara(Player,N):-
+    retract(playerInformation(Player,Aktif,Tambahan,BanyakWilayah)),
+    NewTambahan is Tambahan + N,
+    assertz(playerInformation(Player,Aktif,NewTambahan,BanyakWilayah)),
+    write('Berhasil menambahkan '),
+    write(N),
+    write(' tentara kepada player'),
+    write(Player),nl,
+    write('JANGAN CURANG WOIIII!!!').
+
