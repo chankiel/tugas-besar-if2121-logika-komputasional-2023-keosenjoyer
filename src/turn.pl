@@ -1,9 +1,4 @@
 :- include('data.pl').
-/* Rule */
-/* endTurn. */
-
-listLength([],0).
-listLength([_|Xs],N) :- listLength(Xs,M), N is M+1.
 
 checkBenua(Winner, Loser, Wil):-
     partBenua(Wil, BenuaWil),
@@ -27,7 +22,6 @@ checkAndRetract(NumBen, BykWilL, Loser, BenuaWil) :-
     !,
     retract(infoBenua(Loser, BenuaWil)).
 checkAndRetract(_, _, _, _).
-
 
 isLose(Player):-
     \+mapInformation(Player,_,_),!,
@@ -55,16 +49,19 @@ isWin(Player):-
     retractall(urutanPemain(_)).
 isWin(Player).
 
-
 attack:-
     countAction(_,X),X==1,!,
     write('Anda sudah pernah attack!'),nl.
 
 attack:-
+    urutanPemain(ListP),
+    listLength(ListP,Num),
+    ListP = [Enemy|_],
+    Num==2,riskStat(Enemy,'CEASEFIRE ORDER'),!,
+    write('Tidak bisa menyerang, musuhnya CEASEFIRE!!'),nl.
+
+attack:-
     currentPlayer(P),
-    retract(countAction(M,A)),
-    NewA is A+1,
-    assertz(countAction(M,NewA)),
     write('Sekarang giliran Player '),write(P), write(' menyerang.'),nl,
     inputAsal(Ori,P),
     write('Player '),write(P),write(' ingin memulai penyerangan dari daerah '),write(Ori),nl,
@@ -135,6 +132,9 @@ attack:-
         write('Tentara di wilayah '),write(Ori),write(': '),write(OriTroops),nl,
         write('Tentara di wilayah '),write(LocTarget),write(': '),write(TroopsTarget),nl
     ),
+    retract(countAction(M,A)),
+    NewA is A+1,
+    assertz(countAction(M,NewA)),
     retractall(riskStat(P,_)).
 
 rollAttack(0,0,_).
@@ -299,20 +299,11 @@ endTurn:-
     ),
     retract(riskStat(NewCurrent,_)).
 
-countBonus([],0).
-countBonus([H|T],Res):-
-    bonusTentara(H,B),
-    countBonus(T,ResT),
-    Res is B+ResT.
-
 move(X1,X2,Y):-
     countAction(X,_),X==3,!,
     write('Anda sudah melakukan move sebanyak tiga kali!.'),nl.
 
 move(X1,X2,Y):-
-    retract(countAction(X,Z)),
-    XNew is X+1,
-    assertz(countAction(XNew,Z)),
     mapInformation(P1,X1,N1),
     mapInformation(P2,X2,N2),
     currentPlayer(C),
@@ -328,27 +319,30 @@ move_action(P1,P2,X1,X2,N1,N2,Y,C):-
     assertz(mapInformation(C,X1,NewN1)),
     assertz(mapInformation(C,X2,NewN2)),
     write('Jumlah tentara di '),write(X1),write(': '),write(NewN1),nl,
-    write('Jumlah tentara di '),write(X2),write(': '),write(NewN2),nl.
+    write('Jumlah tentara di '),write(X2),write(': '),write(NewN2),nl,
+    retract(countAction(X,Z)),
+    XNew is X+1,
+    assertz(countAction(XNew,Z)),!.
 
 move_action(P1,P2,X1,X2,N1,N2,Y,C):-
     P1==C,P2==C,!,
     write(C),write(' memindahkan '),write(Y),write(' tentara dari '),
     write(X1),write(' ke '),write(X2),write('.'),nl,nl,
-    write('Tentara tidak mencukupi.'),nl,write('Pemindahan dibatalkan.'),nl.
+    write('Tentara tidak mencukupi.'),nl,write('Pemindahan dibatalkan.'),nl,!.
 
 move_action(P1,P2,X1,X2,N1,N2,Y,C):-
     P1==C,!,
     write(C),write(' tidak memiliki wilayah '),write(X2),nl,
-    write('Pemindahan dibatalkan.'),nl.
+    write('Pemindahan dibatalkan.'),!,nl.
 
 move_action(P1,P2,X1,X2,N1,N2,Y,C):-
     P2==C,!,
     write(C),write(' tidak memiliki wilayah '),write(X1),nl,
-    write('Pemindahan dibatalkan.'),nl.
+    write('Pemindahan dibatalkan.'),!,nl.
 
 move_action(P1,P2,X1,X2,N1,N2,Y,C):-
     write(C),write(' tidak memiliki wilayah '),write(X1),write(' dan '),
-    write(X2),write('.'),nl,write('Pemindahan dibatalkan.'),nl.
+    write(X2),write('.'),nl,write('Pemindahan dibatalkan.'),!,nl.
 
 getRisk([H|_], 1, H).
 getRisk([_|T], Idx, Elmt) :-

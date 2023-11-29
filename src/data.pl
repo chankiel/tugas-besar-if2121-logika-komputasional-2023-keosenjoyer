@@ -17,6 +17,11 @@
 
 risk_content(['CEASEFIRE ORDER','SUPER SOLDIER SERUM','AUXILIARY TROOPS','REBELLION','DISEASE OUTBREAK','SUPPLY CHAIN ISSUE']).
 
+countBonus([],0).
+countBonus([H|T],Res):-
+    bonusTentara(H,B),
+    countBonus(T,ResT),
+    Res is B+ResT.
 
 rotate_list([Head|Tail], RotatedList) :-
     append(Tail, [Head], RotatedList).

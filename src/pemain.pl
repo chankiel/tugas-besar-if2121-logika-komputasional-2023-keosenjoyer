@@ -136,10 +136,15 @@ placeTroops(Wilayah,Num):-
     assertz(urutanPemain(NextListPlayer)), 
     assertz(currentPlayer(NewCurrentPlayer)),
     nextPlayer(ListPlayer,NewCurrentPlayer),
-    write('Giliran '),
     currentPlayer(X),
-    write(X),
-    write(' untuk meletakkan tentaranya.'),!.
+    (Player\==X->
+        write('Giliran '),
+        write(X),
+        write(' untuk meletakkan tentaranya.')
+    ;write('Seluruh pemain telah meletakkan sisa tentara.'),nl,
+     write('Memulai permainan.'),
+     startTurn
+    ).
 
 getFirstArguments(Pemilik, WilayahList) :-
     findall(Wilayah, mapInformation(Pemilik, Wilayah, N), WilayahList).
@@ -171,7 +176,8 @@ placeAutomatic:-
     write(' untuk meletakkan tentaranya.'),nl,!,
     Player == X,
     write('Seluruh pemain telah meletakkan sisa tentara.'),nl,
-    write('Memulai permainan.').
+    write('Memulai permainan.'),
+    startTurn.
 
 placeAutomatic:-
     currentPlayer(Player), 
@@ -266,3 +272,26 @@ initTesting:-
     assertz(mapInformation(ben,a4,2)),
     assertz(mapInformation(ben,a5,2)),
     assertz(mapInformation(ben,a6,2)).
+
+startTurn:-
+    retract(currentPlayer(C)),
+    retract(urutanPemain(ListPlayer)),
+    retract(countAction(_,_)),
+    ListPlayer = [NewCurrent|_],
+    rotate_list(ListPlayer,NewList),
+    assertz(urutanPemain(NewList)),
+    assertz(currentPlayer(NewCurrent)),
+    assertz(countAction(0,0)),
+    write('Sekarang giliran Player '),write(NewCurrent),write('!'),nl,
+    AddTroop is 4,
+    retract(playerInformation(NewCurrent,TroopsA,TroopsT,NumWil)),
+    AddTroop1 is AddTroop+(NumWil div 2),
+    findall(Y,(infoBenua(NewCurrent,Y)),List),
+    countBonus(List,AddBonus),
+    AddTroop2 is AddTroop1+AddBonus,
+    AddTroopFinal is AddTroop2,
+    NewTroopsT is TroopsT+AddTroopFinal,
+    assertz(playerInformation(NewCurrent,TroopsA,NewTroopsT,NumWil)),
+    write('Player '),write(NewCurrent),write(' mendapatkan '),
+    write(AddTroopFinal),write(' tentara tambahan.'),nl,
+    retract(riskStat(NewCurrent,_)).
