@@ -1,7 +1,6 @@
 :- include('data.pl').
 /* Rule */
 
-
 checkPlayerTerritories(PlayerLabel) :-
     (   (PlayerLabel == 'p1') -> 
         labelpemain(PlayerName, 1)
@@ -172,9 +171,7 @@ placeAutomatic:-
     write(' untuk meletakkan tentaranya.'),nl,!,
     Player == X,
     write('Seluruh pemain telah meletakkan sisa tentara.'),nl,
-    write('Memulai permainan.'),
-    retract(countAction(_,_)),
-    assertz(countAction(0,0)).
+    write('Memulai permainan.').
 
 placeAutomatic:-
     currentPlayer(Player), 
