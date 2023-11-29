@@ -42,6 +42,7 @@ initialize :-
     write(' dapat memulai terlebih dahulu.'), nl,
     write('Setiap pemain mendapatkan '),write(X),
     write(' tentara.'), nl,
+    assertz(countAction(0,0)),
     assertz(urutanPemain(SortedPlayers)).
 
 gameInPlay :- 

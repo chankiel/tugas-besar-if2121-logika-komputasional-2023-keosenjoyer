@@ -13,7 +13,7 @@ checkBenua(Winner, Loser, Wil):-
     listLength(ListBenL, BykWilL),
     jmlhWilBenua(BenuaWil, NumBen),
     checkAndAssert(NumBen, BykWilW, Winner, BenuaWil),
-    checkAndRetract(BykWilL, Loser, BenuaWil).
+    checkAndRetract(NumBen,BykWilL, Loser, BenuaWil).
 
 checkAndAssert(NumBen, BykWilW, Winner, BenuaWil) :-
     NumBen == BykWilW,
@@ -21,12 +21,12 @@ checkAndAssert(NumBen, BykWilW, Winner, BenuaWil) :-
     assertz(infoBenua(Winner, BenuaWil)).
 checkAndAssert(_, _, _, _).
 
-checkAndRetract(BykWilL, Loser, BenuaWil) :-
-    BykWilL == 0,
-    infoBenua(Loser, BenuaWil),
+checkAndRetract(NumBen, BykWilL, Loser, BenuaWil) :-
+    BykWilL \== NumBen,
+    infoBenua(Loser,BenuaWil),
     !,
     retract(infoBenua(Loser, BenuaWil)).
-checkAndRetract(_, _, _).
+checkAndRetract(_, _, _, _).
 
 
 isLose(Player):-
@@ -41,7 +41,7 @@ isLose(Player).
 
 isWin(Player):-
     playerInformation(Player,_,_,NumWil),
-    NumWil==48,!,
+    NumWil==24,!,
     write('******************************'),nl,
     write(Player),write(' telah menguasai dunia'),nl,
     write('******************************'),
@@ -101,7 +101,7 @@ attack:-
     retract(mapInformation(Name,LocTarget,TroopsTarget)),
     (@>(Res1,Res2)->
         write('Player '),write(P),write(' menang! Wilayah '),write(LocTarget),
-        write('sekarang dikuasai oleh Player '),write(P),nl,
+        write(' sekarang dikuasai oleh Player '),write(P),nl,
         MaxTroops is CTroops+1,
         inputTroops(MaxTroops,ResStay,2),
         /* Update Jmlh troops di LocTarget dan di Ori */
@@ -116,7 +116,6 @@ attack:-
         retract(playerInformation(Name,AktifP,PasifP,NumWill)),
         NewAktif is AktifP-TroopsTarget,
         NumWillT is NumWilT-1,
-        assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
         assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
         write('Tentara di wilayah '),write(Ori),write(': '),write(OriTroops),nl,
         write('Tentara di wilayah '),write(LocTarget),write(': '),write(ResStay),nl,
@@ -284,7 +283,7 @@ endTurn:-
         AddTroop is 4,
         retract(playerInformation(NewCurrent,TroopsA,TroopsT,NumWil)),
         AddTroop1 is AddTroop+(NumWil div 2),
-        findall(Y,clause(infoBenua(NewCurrent,Y),_),List),
+        findall(Y,(infoBenua(NewCurrent,Y)),List),
         countBonus(List,AddBonus),
         AddTroop2 is AddTroop1+AddBonus,
         (riskStat(NewCurrent,RiskT),RiskT=='AUXILIARY TROOPS'->
