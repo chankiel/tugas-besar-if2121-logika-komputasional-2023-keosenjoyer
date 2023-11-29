@@ -44,21 +44,21 @@ write('#   |                           #            [AF3('), write(AF3Troops), w
 write('----|                           #                          #          [AU1('), write(AUS1Troops), write(')]---[AU2('), write(AUS2Troops), write(')]-------\n'),
 write('#                               #                          #                                    #\n'),
 write('#       South America           #         Africa           #          Australia                 #\n'),
-write('#################################################################################################\n').
+write('#################################################################################################\n'), !.
 
 takeLocation(KodeWilayah):- 
     \+ wilayah(KodeWilayah),
     write('Tidak ada wilayah tersebut'),!.
 takeLocation(KodeWilayah):- 
     retract(mapInformation(Pemilik,KodeWilayah,N)),
+    Pemilik \== null,
     !,
+    currentPlayer(Player),
     assertz(mapInformation(Pemilik,KodeWilayah,N)),
     write('Wilayah sudah dikuasai. Tidak bisa mengambil.'),nl,
-    retract(currentPlayer(Player)),
     write('Giliran '),
     write(Player),
-    write(' untuk memilih wilayahnya.'),
-    assertz(currentPlayer(Player)).
+    write(' untuk memilih wilayahnya.').
 takeLocation(KodeWilayah):- 
     retract(currentPlayer(Player)), 
     retract(playerInformation(Player,Aktif,Tambahan,BanyakWilayah)),
@@ -79,10 +79,11 @@ takeLocation(KodeWilayah):-
     write('Giliran '),
     write(NewCurrentPlayer),
     write(' untuk memilih wilayahnya.'),nl,
-    findall(Place, mapInformation(Place,_,_), ListWilayah),
+    findall(Place, mapInformation(null,Place,_), ListWilayah),
     listLength(ListWilayah, N),
-    N == 24,
-    write('Seluruh wilayah telah diambil pemain. Memulai pembagian sisa tentara.').
+    N == 0,
+    write('Seluruh wilayah telah diambil pemain. Memulai pembagian sisa tentara.'), nl,
+    displayMap.
 /*
 cheatAkuisisiWilayah(Player,KodeWilayah):-
     \+ playerInformation(Player,_,_,_),
