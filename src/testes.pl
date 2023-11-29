@@ -40,11 +40,10 @@ roll_dice_n_times(N, [Outcome | Rest]) :-
     N_minus_1 is N - 1,
     roll_dice_n_times(N_minus_1, Rest).
 
-% Predicate to generate all possible sums
+/*
 insert_in(N, Sums) :-
     findall(Sum, generate_sums(N, Sum), Sums).
 
-% Helper predicate to generate the sum of pairs recursively
 generate_sums(0, 0).
 generate_sums(N, Sum) :-
     N > 0,
@@ -52,6 +51,40 @@ generate_sums(N, Sum) :-
     N_minus_1 is N - 1,
     generate_sums(N_minus_1, RestSum),
     Sum is Number + RestSum.
+*/
+
+generate_all_sums(NumDice, Sums) :-
+    Sides = [1, 2, 3, 4, 5, 6],
+    findall(Sum, generate_sums_helper(NumDice, 0, Sides, Sum), Sums).
+
+generate_sums_helper(0, CurrentSum, _, CurrentSum).
+generate_sums_helper(DiceLeft, CurrentSum, Sides, FinalSum) :-
+    DiceLeft > 0,
+    member(Side, Sides),
+    NewDiceLeft is DiceLeft - 1,
+    NewSum is CurrentSum + Side,
+    generate_sums_helper(NewDiceLeft, NewSum, Sides, FinalSum).
+
+/*
+calculate_win_probability(MyDice, OpponentDice, Probability) :-
+    calculate_max_sum(MyDice, MaxMySum),
+    calculate_max_sum(OpponentDice, MaxOpponentSum),
+    findall(Win, (
+        between(MyDice, MaxMySum, MySum),
+        between(OpponentDice, MaxOpponentSum, OpponentSum),
+        MySum > OpponentSum
+    ), Wins),
+    findall(Total, (
+        between(1, MaxMySum, _),
+        between(1, MaxOpponentSum, _)
+    ), TotalOutcomes),
+    length(Wins, NumWins),
+    length(TotalOutcomes, NumTotal),
+    Probability is NumWins (bagi) NumTotal.
+*/
+
+calculate_max_sum(Dice, MaxSum) :-
+    MaxSum is Dice * 6.
 
 compare(N, M, Res) :-
     integer(N),
@@ -63,14 +96,12 @@ compare(N, M, Res) :-
     total_wins(ListA, ListB, Wins),
     Res is Wins / (LenA * LenB) * 100.
 
-% Count the number of elements in ListA that are greater than elements in ListB
 total_wins([], _, 0).
 total_wins([A | RestA], ListB, Wins) :-
     count_greater_than(A, ListB, WinsRest),
     total_wins(RestA, ListB, RestWins),
     Wins is WinsRest + RestWins.
 
-% Count the number of elements greater than X in a list
 count_greater_than(_, [], 0).
 count_greater_than(X, [Y | Rest], Count) :-
     X > Y,

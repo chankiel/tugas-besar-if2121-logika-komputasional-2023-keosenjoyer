@@ -96,7 +96,7 @@ insert_in_order([ScoreX, PlayerX], [[ScoreY, PlayerY]|Rest], [[ScoreY, PlayerY]|
     ScoreX < ScoreY,
     insert_in_order([ScoreX, PlayerX], Rest, SortedRest).
 
-announce_order([], X) :- nl.
+announce_order([], _) :- nl.
 announce_order([Player | Rest], X) :- 
     write(Player),
     assertz(playerInformation(Player,0,X,0)),
