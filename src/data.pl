@@ -12,15 +12,30 @@
 :- dynamic(infoBenua/2).
 /* Nama dan risk card sekarang */
 :- dynamic(riskStat/2).
-/* Info benua dan pemiliknya */
-:- dynamic(infoBenua/2).
 /* Jumlah aksi current player (move,attack) */
 :- dynamic(countAction/2).
 
 risk_content(['CEASEFIRE ORDER','SUPER SOLDIER SERUM','AUXILIARY TROOPS','REBELLION','DISEASE OUTBREAK','SUPPLY CHAIN ISSUE']).
 
+
+rotate_list([Head|Tail], RotatedList) :-
+    append(Tail, [Head], RotatedList).
+
 listLength([],0).
 listLength([_|Xs],N) :- listLength(Xs,M), N is M+1.
+
+getElmt([H|_],1,H).
+getElmt([H|T],Idx,Res):-
+    NewIdx is Idx-1,
+    getElmt(T,NewIdx,ResT),
+    Res = ResT.
+
+deleteElmt([H|T],Elmt,Res):-
+    H==Elmt,!,
+    Res = T.
+deleteElmt([H|T],Elmt,Res):-
+    deleteElmt(T,Elmt,ResT),
+    Res = [H|ResT].
 
 /* inisialisasi */
 inisialisasiMapInformation:-
@@ -62,6 +77,13 @@ benua(asia).
 benua(amerikaselatan).
 benua(afrika).
 benua(australia).
+
+jmlhWilBenua(amerikautara,5).
+jmlhWilBenua(eropa,5).
+jmlhWilBenua(amerikaselatan,2).
+jmlhWilBenua(afrika,3).
+jmlhWilBenua(asia,7).
+jmlhWilBenua(australia,2).
 
 wilayah(na1).
 wilayah(na2).

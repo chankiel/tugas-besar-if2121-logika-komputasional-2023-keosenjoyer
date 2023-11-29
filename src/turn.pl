@@ -2,17 +2,59 @@
 /* Rule */
 /* endTurn. */
 
-rotate_list([Head|Tail], RotatedList) :-
-    append(Tail, [Head], RotatedList).
-
 listLength([],0).
 listLength([_|Xs],N) :- listLength(Xs,M), N is M+1.
 
-getElmt([H|_],1,H).
-getElmt([H|T],Idx,Res):-
-    NewIdx is Idx-1,
-    getElmt(T,NewIdx,ResT),
-    Res = ResT.
+checkBenua(Winner, Loser, Wil):-
+    partBenua(Wil, BenuaWil),
+    findall(X, (mapInformation(Winner, X, _), partBenua(X, BenuaX), BenuaX == BenuaWil), ListBenW),
+    findall(Y, (mapInformation(Loser, Y, _), partBenua(Y, BenuaY), BenuaY == BenuaWil), ListBenL),
+    listLength(ListBenW, BykWilW),
+    listLength(ListBenL, BykWilL),
+    jmlhWilBenua(BenuaWil, NumBen),
+    checkAndAssert(NumBen, BykWilW, Winner, BenuaWil),
+    checkAndRetract(BykWilL, Loser, BenuaWil).
+
+checkAndAssert(NumBen, BykWilW, Winner, BenuaWil) :-
+    NumBen == BykWilW,
+    !,
+    assertz(infoBenua(Winner, BenuaWil)).
+checkAndAssert(_, _, _, _).
+
+checkAndRetract(BykWilL, Loser, BenuaWil) :-
+    BykWilL == 0,
+    infoBenua(Loser, BenuaWil),
+    !,
+    retract(infoBenua(Loser, BenuaWil)).
+checkAndRetract(_, _, _).
+
+
+isLose(Player):-
+    \+mapInformation(Player,_,_),!,
+    write('Jumlah wilayah Player '),write(Player),write(' 0\nPlayer '),write(Player),
+    write(' keluar dari permainan!.\n'),
+    retract(playerInformation(Player,_,_,_)),
+    retract(urutanPemain(ListPlayer)),
+    deleteElmt(ListPlayer,Player,ListUpdt),
+    assertz(urutanPemain(ListUpdt)).
+isLose(Player).
+
+isWin(Player):-
+    playerInformation(Player,_,_,NumWil),
+    NumWil==48,!,
+    write('******************************'),nl,
+    write(Player),write(' telah menguasai dunia'),nl,
+    write('******************************'),
+    retractall(playerInformation(_,_,_,_)),
+    retractall(mapInformation(_,_,_)),
+    retractall(labelpemain(_,_)),
+    retractall(currentPlayer(_)),
+    retractall(countAction(_,_)),
+    retractall(infoBenua(_,_)),
+    retractall(riskStat(_,_)),
+    retractall(urutanPemain(_)).
+isWin(Player).
+
 
 attack:-
     countAction(_,X),X==1,!,
@@ -20,6 +62,9 @@ attack:-
 
 attack:-
     currentPlayer(P),
+    retract(countAction(M,A)),
+    NewA is A+1,
+    assertz(countAction(M,NewA)),
     write('Sekarang giliran Player '),write(P), write(' menyerang.'),nl,
     inputAsal(Ori,P),
     write('Player '),write(P),write(' ingin memulai penyerangan dari daerah '),write(Ori),nl,
@@ -64,8 +109,8 @@ attack:-
         OriTroops is Troops-ResStay,
         assertz(mapInformation(P,Ori,OriTroops)),
         /* Nambahin jmlh wilayah P sbnyk 1 */
-        retract(playerInformation(P,Temp1,Temp2,NumWil)),
-        NumWilT is NumWil+1,
+        retract(playerInformation(P,Temp1,Temp2,Num)),
+        NumWilT is (Num+1),
         assertz(playerInformation(P,Temp1,Temp2,NumWilT)),
         /* update tentara aktif dan jumlah wilayah si Name */
         retract(playerInformation(Name,AktifP,PasifP,NumWill)),
@@ -74,7 +119,10 @@ attack:-
         assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
         assertz(playerInformation(Name,NewAktif,PasifP,NumWillT)),
         write('Tentara di wilayah '),write(Ori),write(': '),write(OriTroops),nl,
-        write('Tentara di wilayah '),write(LocTarget),write(': '),write(ResStay),nl
+        write('Tentara di wilayah '),write(LocTarget),write(': '),write(ResStay),nl,
+        checkBenua(P,Name,LocTarget),
+        isLose(Name),
+        isWin(P)
     ;
         write('Player '),write(Name),write(' menang! Sayang sekali penyerangan Anda gagal :( '),nl,
         /* Update troops di LocTarget sama Ori */
@@ -114,7 +162,12 @@ inputAsal(X,P):-
     (wilayah(Y)->
         (mapInformation(P,Y,Z)->
             (Z\==1->
-                X = Y
+                (tetangga(Y,Temp),mapInformation(P1,Temp,_),P1\==P->
+                    X = Y
+                ;
+                    write('Tidak ada daerah di sekitar wilayah '),write(Y),write(' yang dapat diserang.\nPilih yang lain!\n'),
+                    inputAsal(X,P)    
+                )
             ;
                 write('Jumlah troops di wilayah tersebut hanya satu. Pilih yang lain!\n'),
                 inputAsal(X,P)
@@ -192,10 +245,10 @@ draft(Wilayah,Num):-
 draft(Wilayah,Num):-
     currentPlayer(Player),
     retract(mapInformation(Player,Wilayah,N)),
-    retract(playerInformation(Player,Aktif,Tambahan,_)),
+    retract(playerInformation(Player,Aktif,Tambahan,NumWil)),
     NewTambahan is Tambahan-Num,
     NewAktif is Aktif+Num,
-    assertz(playerInformation(Player,NewAktif,NewTambahan,_)),
+    assertz(playerInformation(Player,NewAktif,NewTambahan,NumWil)),
     Nl is N + Num, 
     assertz(mapInformation(Player,Wilayah,Nl)),
     write('Player '),
@@ -336,9 +389,8 @@ risk_message(4):-
 risk_message(4):-
     write('Salah satu wilayah acak pemain akan berpindah kekuasaan menjadi milik lawan.'), nl,
     currentPlayer(C),
-    urutanPemain(ListPlayer),
-    findall(X,(clause(playerInformation(X,_,_,_),X\==C)),ListP),
-    findall(Y,clause(mapInformation(C,Y,_)),ListW),
+    findall(X, (playerInformation(X, _, _, _), X \== C), ListP),
+    findall(Y,mapInformation(C,Y,_),ListW),
     getPlayerWil(ListP,ListW,TargetP,TargetW),
     updatePlayers(TargetP,C,TargetW),
     write('Wilayah '),write(TargetW),write(' sekarang dikuasai oleh Player '), write(TargetP),nl.
@@ -380,6 +432,7 @@ init:-
     retractall(urutanPemain(_)),
     retractall(playerInformation(_,_,_,_)),
     retractall(mapInformation(_,_,_)),
+    retractall(infoBenua(_,_)),
     assertz(currentPlayer(tes)),
     assertz(urutanPemain([kiel,ben,tes])),
     assertz(countAction(0,0)),
