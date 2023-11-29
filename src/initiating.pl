@@ -1,6 +1,30 @@
 :- include('data.pl').
 
 initialize :-    
+    assertz(mapInformation(null,af1,0)),
+    assertz(mapInformation(null,af2,0)),
+    assertz(mapInformation(null,af3,0)),
+    assertz(mapInformation(null,a1,0)),
+    assertz(mapInformation(null,a2,0)),
+    assertz(mapInformation(null,a3,0)),
+    assertz(mapInformation(null,a4,0)),
+    assertz(mapInformation(null,a5,0)),
+    assertz(mapInformation(null,a6,0)),
+    assertz(mapInformation(null,a7,0)),
+    assertz(mapInformation(null,na5,0)),
+    assertz(mapInformation(null,na4,0)),
+    assertz(mapInformation(null,na3,0)),
+    assertz(mapInformation(null,na2,0)),
+    assertz(mapInformation(null,na1,0)),
+    assertz(mapInformation(null,sa1,0)),
+    assertz(mapInformation(null,sa2,0)),
+    assertz(mapInformation(null,e1,0)),
+    assertz(mapInformation(null,e2,0)),
+    assertz(mapInformation(null,e3,0)),
+    assertz(mapInformation(null,e4,0)),
+    assertz(mapInformation(null,e5,0)),
+    assertz(mapInformation(null,au1,0)),
+    assertz(mapInformation(null,au2,0)),
     write('Masukkan jumlah pemain: '),
     read(NumPlayers), nl,
     validate_num_players(NumPlayers),
@@ -39,11 +63,11 @@ get_player_names(0, []) :- !.
 get_player_names(Num, [Name|Rest]) :-
     NewNum is Num - 1,
     get_player_names(NewNum, Rest),
-    assertz(labelpemain(Name, NewNum)),
     write('Masukkan nama pemain '),
     write(Num),
     write(': '),
-    read(Name).
+    read(Name),
+    assertz(labelpemain(Name, Num)).
 
 get_sorted_players([], []).
 get_sorted_players([[_, Player]|Rest], [Player|SortedRest]) :-
